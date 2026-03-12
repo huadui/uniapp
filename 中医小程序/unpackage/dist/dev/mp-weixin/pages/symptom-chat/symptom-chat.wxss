@@ -1,0 +1,204 @@
+
+.chat-container.data-v-1ef4f868 {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #F7F5F0;
+  background-image: radial-gradient(#E8E6E1 1px, transparent 1px);
+  background-size: 20px 20px;
+  color: #4A4A4A;
+  font-family: "PingFang SC", sans-serif;
+}
+
+/* 顶部导航 */
+.navbar.data-v-1ef4f868 {
+  background: rgba(247, 245, 240, 0.95);
+  padding: 12px 16px;
+  padding-top: calc(44px + env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(139, 90, 43, 0.1);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  box-sizing: border-box;
+}
+.nav-title.data-v-1ef4f868 { 
+  font-size: 18px; 
+  font-weight: 600; 
+  flex: 1; 
+  text-align: center; 
+  font-family: "Kaiti SC", "STKaiti", serif;
+  color: #333;
+}
+.back-icon.data-v-1ef4f868 { font-size: 24px; color: #555; width: 40px;
+}
+.nav-right.data-v-1ef4f868 { width: 40px;
+}
+
+/* 聊天区域 */
+.chat-area.data-v-1ef4f868 {
+  flex: 1;
+  /* 留出顶部导航和底部输入区的高度 */
+  margin-top: calc(44px + 44px + env(safe-area-inset-top));
+  margin-bottom: calc(60px + 40px + env(safe-area-inset-bottom)); 
+  height: 0; /* flex item 需要设置 height 0 才能滚动 */
+}
+.chat-inner.data-v-1ef4f868 {
+  padding: 20px;
+}
+.message.data-v-1ef4f868 {
+  display: flex;
+  margin-bottom: 24px;
+  align-items: flex-start;
+}
+.message.user.data-v-1ef4f868 { flex-direction: row-reverse;
+}
+.avatar.data-v-1ef4f868 {
+  width: 40px; height: 40px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Kaiti SC", "STKaiti", serif;
+  font-size: 18px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.avatar.ai.data-v-1ef4f868 { 
+  background: #8B5A2B; 
+  color: #fff; 
+  border: 2px solid #A67B51;
+}
+.avatar.user.data-v-1ef4f868 {
+  background: #5D7A69;
+  color: #fff;
+  border: 2px solid #7A9A85;
+}
+.bubble.data-v-1ef4f868 {
+  max-width: 75%;
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0 12px;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.message.ai .bubble.data-v-1ef4f868 { 
+  background: #FFFFFF; 
+  color: #333; 
+  border: 1px solid rgba(139, 90, 43, 0.1);
+}
+.message.user .bubble.data-v-1ef4f868 { 
+  background: #E9F0EA; 
+  color: #333; 
+  border: 1px solid rgba(93, 122, 105, 0.1);
+}
+
+/* 结构化分析卡片 */
+.analysis-card.data-v-1ef4f868 {
+  background: #FDFBF7;
+  border: 1px solid #E8E0D5;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 12px;
+  font-size: 14px;
+  position: relative;
+}
+.analysis-card.data-v-1ef4f868::before {
+  content: '';
+  position: absolute;
+  top: 4px; left: 4px; right: 4px; bottom: 4px;
+  border: 1px dashed #E8E0D5;
+  pointer-events: none;
+}
+.tag-group.data-v-1ef4f868 { display: flex; gap: 8px; margin-bottom: 12px; position: relative; z-index: 1;
+}
+.tag.data-v-1ef4f868 { 
+  padding: 4px 10px; 
+  border-radius: 4px; 
+  font-size: 12px; 
+  font-family: "Kaiti SC", "STKaiti", serif;
+}
+.tag.t1.data-v-1ef4f868 { background: #FBE8E6; color: #C84C42; border: 1px solid #E6C0BD;
+}
+.tag.t2.data-v-1ef4f868 { background: #FBF5E6; color: #B8860B; border: 1px solid #E6D0A0;
+}
+.divider.data-v-1ef4f868 { 
+  height: 1px; 
+  background: #E8E0D5; 
+  margin: 12px 0; 
+  position: relative;
+  z-index: 1;
+}
+.advice-title.data-v-1ef4f868 { 
+  font-weight: bold; 
+  margin-bottom: 6px; 
+  font-size: 14px; 
+  color: #8B5A2B; 
+  display: flex; align-items: center; gap: 6px;
+  position: relative; z-index: 1;
+}
+.advice-content.data-v-1ef4f868 { position: relative; z-index: 1; color: #555;
+}
+
+/* 底部输入区 */
+.input-area.data-v-1ef4f868 {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #FDFBF7;
+  padding: 12px 16px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  border-top: 1px solid #E8E0D5;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.02);
+  z-index: 100;
+}
+.quick-tags.data-v-1ef4f868 {
+  white-space: nowrap;
+  width: 100%;
+  margin-bottom: 8px;
+}
+.quick-tag-list.data-v-1ef4f868 {
+  display: flex;
+  padding-right: 20px;
+}
+.quick-tag.data-v-1ef4f868 {
+  display: inline-block;
+  padding: 6px 14px;
+  background: #fff;
+  border-radius: 16px;
+  font-size: 12px;
+  color: #666;
+  margin-right: 10px;
+  border: 1px solid #E0D8CE;
+  font-family: "Kaiti SC", "STKaiti", serif;
+}
+.input-box.data-v-1ef4f868 {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.text-input.data-v-1ef4f868 {
+  flex: 1;
+  height: 44px;
+  background: #fff;
+  border: 1px solid #E0D8CE;
+  border-radius: 22px;
+  padding: 0 16px;
+  font-size: 15px;
+  color: #333;
+}
+.send-btn.data-v-1ef4f868 {
+  width: 44px;
+  height: 44px;
+  background: #8B5A2B;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 20px;
+  box-shadow: 0 2px 8px rgba(139, 90, 43, 0.3);
+}

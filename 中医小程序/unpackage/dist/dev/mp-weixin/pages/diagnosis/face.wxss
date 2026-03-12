@@ -1,0 +1,161 @@
+
+.diag-container.data-v-9f8aba69 {
+  min-height: 100vh;
+  background-color: #F7F5F0;
+  font-family: "PingFang SC", "Kaiti SC", serif;
+  display: flex;
+  flex-direction: column;
+}
+.navbar.data-v-9f8aba69 {
+  background: rgba(247, 245, 240, 0.95);
+  padding: 12px 16px;
+  padding-top: calc(44px + env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.nav-title.data-v-9f8aba69 { flex: 1; text-align: center; font-size: 18px; font-weight: 600; color: #333;
+}
+.back-icon.data-v-9f8aba69 { width: 40px; font-size: 24px;
+}
+.nav-right.data-v-9f8aba69 { width: 40px;
+}
+
+/* 拍摄区 */
+.camera-section.data-v-9f8aba69 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  align-items: center;
+  justify-content: center;
+}
+.camera-placeholder.data-v-9f8aba69 {
+  width: 280px;
+  height: 380px;
+  background: #E8E0D5;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+  border: 2px dashed #C8B8A8;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+}
+.camera-mask.data-v-9f8aba69 {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.1);
+  pointer-events: none;
+  z-index: 1;
+}
+.face-outline.data-v-9f8aba69 {
+  width: 180px;
+  height: 240px;
+  border: 2px solid rgba(255,255,255,0.6);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+.camera-tips.data-v-9f8aba69 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #8B5A2B;
+  z-index: 2;
+}
+.camera-tips i.data-v-9f8aba69 { font-size: 48px; margin-bottom: 12px;
+}
+.sub-tip.data-v-9f8aba69 { font-size: 12px; opacity: 0.7; margin-top: 8px; max-width: 80%; text-align: center;
+}
+.preview-img.data-v-9f8aba69 {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 0;
+}
+.action-btn.data-v-9f8aba69 {
+  width: 80%;
+  height: 50px;
+  background: #8B5A2B;
+  color: #fff;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 12px rgba(139, 90, 43, 0.3);
+}
+.action-btn[disabled].data-v-9f8aba69 { background: #D8D0C5; box-shadow: none;
+}
+
+/* 结果区 */
+.result-section.data-v-9f8aba69 {
+  padding: 20px;
+}
+.result-header.data-v-9f8aba69 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.result-title.data-v-9f8aba69 { font-size: 20px; font-weight: 600; color: #333;
+}
+.re-btn.data-v-9f8aba69 { font-size: 14px; color: #8B5A2B; border: 1px solid #8B5A2B; padding: 4px 12px; border-radius: 15px;
+}
+.result-card.data-v-9f8aba69 {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(139, 90, 43, 0.08);
+}
+.face-feature.data-v-9f8aba69 {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #FBF5E6;
+  border-radius: 8px;
+}
+.feature-item.data-v-9f8aba69 { text-align: center;
+}
+.f-label.data-v-9f8aba69 { font-size: 12px; color: #888; margin-bottom: 4px;
+}
+.f-val.data-v-9f8aba69 { font-size: 16px; font-weight: 600; color: #333;
+}
+.diagnosis-main.data-v-9f8aba69 { margin-bottom: 24px;
+}
+.d-title.data-v-9f8aba69 { font-size: 18px; font-weight: 600; color: #333; margin-bottom: 8px;
+}
+.d-desc.data-v-9f8aba69 { font-size: 14px; color: #555; line-height: 1.6;
+}
+.organ-status.data-v-9f8aba69 { margin-bottom: 24px;
+}
+.organ-title.data-v-9f8aba69 { font-size: 14px; font-weight: 600; margin-bottom: 12px;
+}
+.organ-grid.data-v-9f8aba69 { display: flex; justify-content: space-between;
+}
+.organ-item.data-v-9f8aba69 { display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.o-name.data-v-9f8aba69 { font-size: 12px; color: #666;
+}
+.o-dot.data-v-9f8aba69 { width: 8px; height: 8px; border-radius: 50%;
+}
+.status-ok .o-dot.data-v-9f8aba69 { background: #5D7A69;
+}
+.status-warn .o-dot.data-v-9f8aba69 { background: #B8860B; box-shadow: 0 0 4px #B8860B;
+}
+.suggestion-box.data-v-9f8aba69 {
+  background: #F9F7F2;
+  padding: 16px;
+  border-radius: 8px;
+}
+.s-title.data-v-9f8aba69 { font-weight: bold; color: #5D7A69; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+}
+.s-item.data-v-9f8aba69 { font-size: 13px; color: #666; line-height: 1.8;
+}

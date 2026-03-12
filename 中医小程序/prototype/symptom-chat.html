@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>问诊脉络</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #8B5A2B; /* 赭石 */
+      --secondary-color: #5D7A69; /* 竹青 */
+      --bg-color: #F7F5F0; /* 米宣 */
+      --chat-bg-user: #E9F0EA; /* 浅竹青 */
+      --chat-bg-ai: #FFFFFF;
+      --text-main: #4A4A4A;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-color);
+      background-image: radial-gradient(#E8E6E1 1px, transparent 1px);
+      background-size: 20px 20px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      color: var(--text-main);
+    }
+
+    /* 顶部导航 */
+    .navbar {
+      background: rgba(247, 245, 240, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 12px 16px;
+      padding-top: calc(44px + env(safe-area-inset-top));
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid rgba(139, 90, 43, 0.1);
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+    }
+
+    .nav-title { 
+      font-size: 18px; 
+      font-weight: 600; 
+      flex: 1; 
+      text-align: center; 
+      margin-right: 24px; 
+      font-family: "Kaiti SC", "STKaiti", serif;
+      color: #333;
+    }
+    .back-icon { font-size: 24px; color: #555; }
+
+    /* 聊天区域 */
+    .chat-area {
+      flex: 1;
+      padding: 20px;
+      padding-top: calc(60px + 44px + env(safe-area-inset-top));
+      padding-bottom: 140px;
+      overflow-y: auto;
+    }
+
+    .message {
+      display: flex;
+      margin-bottom: 24px;
+      align-items: flex-start;
+    }
+
+    .message.user { flex-direction: row-reverse; }
+
+    .avatar {
+      width: 40px; height: 40px;
+      border-radius: 8px;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: "Kaiti SC", "STKaiti", serif;
+      font-size: 18px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    
+    .avatar.ai { 
+      background: #8B5A2B; 
+      color: #fff; 
+      border: 2px solid #A67B51;
+    }
+    
+    .avatar.user {
+      background: #5D7A69;
+      color: #fff;
+      border: 2px solid #7A9A85;
+    }
+
+    .bubble {
+      max-width: 75%;
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-size: 15px;
+      line-height: 1.6;
+      margin: 0 12px;
+      position: relative;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .message.ai .bubble { 
+      background: var(--chat-bg-ai); 
+      color: #333; 
+      border: 1px solid rgba(139, 90, 43, 0.1);
+    }
+    
+    .message.user .bubble { 
+      background: var(--chat-bg-user); 
+      color: #333; 
+      border: 1px solid rgba(93, 122, 105, 0.1);
+    }
+
+    /* 结构化分析卡片 - 仿古笺纸 */
+    .analysis-card {
+      background: #FDFBF7;
+      border: 1px solid #E8E0D5;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 12px;
+      font-size: 14px;
+      position: relative;
+    }
+    
+    .analysis-card::before {
+      content: '';
+      position: absolute;
+      top: 4px; left: 4px; right: 4px; bottom: 4px;
+      border: 1px dashed #E8E0D5;
+      pointer-events: none;
+    }
+
+    .tag-group { display: flex; gap: 8px; margin-bottom: 12px; position: relative; z-index: 1; }
+    .tag { 
+      padding: 4px 10px; 
+      border-radius: 4px; 
+      font-size: 12px; 
+      font-family: "Kaiti SC", "STKaiti", serif;
+    }
+    .tag.t1 { background: #FBE8E6; color: #C84C42; border: 1px solid #E6C0BD; }
+    .tag.t2 { background: #FBF5E6; color: #B8860B; border: 1px solid #E6D0A0; }
+
+    .divider { 
+      height: 1px; 
+      background: #E8E0D5; 
+      margin: 12px 0; 
+      position: relative;
+      z-index: 1;
+    }
+    
+    .advice-title { 
+      font-weight: bold; 
+      margin-bottom: 6px; 
+      font-size: 14px; 
+      color: #8B5A2B; 
+      display: flex; align-items: center; gap: 6px;
+      position: relative; z-index: 1;
+    }
+
+    .advice-content { position: relative; z-index: 1; color: #555; }
+
+    /* 底部输入区 */
+    .input-area {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #FDFBF7;
+      padding: 12px 16px;
+      padding-bottom: calc(12px + env(safe-area-inset-bottom));
+      border-top: 1px solid #E8E0D5;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.02);
+    }
+
+    .quick-tags {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      margin-bottom: 8px;
+    }
+
+    .quick-tag {
+      padding: 6px 14px;
+      background: #fff;
+      border-radius: 16px;
+      font-size: 12px;
+      color: #666;
+      white-space: nowrap;
+      border: 1px solid #E0D8CE;
+      font-family: "Kaiti SC", "STKaiti", serif;
+    }
+
+    .input-box {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .text-input {
+      flex: 1;
+      height: 44px;
+      background: #fff;
+      border: 1px solid #E0D8CE;
+      border-radius: 22px;
+      padding: 0 16px;
+      font-size: 15px;
+      color: #333;
+    }
+
+    .send-btn {
+      width: 44px;
+      height: 44px;
+      background: #8B5A2B;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 20px;
+      box-shadow: 0 2px 8px rgba(139, 90, 43, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="back-icon"><i class="ri-arrow-left-s-line"></i></div>
+    <div class="nav-title">问诊脉络</div>
+  </div>
+
+  <div class="chat-area">
+    <div class="message ai">
+      <div class="avatar ai">医</div>
+      <div class="bubble">
+        阁下安好。吾乃智能中医助手。请详述身体不适之处，或上传舌象、面相照片，吾将为您辨证施治。
+        <div class="analysis-card">
+          <div class="advice-title">问诊示例：</div>
+          <div class="advice-content" style="font-style: italic;">"近来夜寐不安，心烦易怒，口苦咽干，不知何故？"</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="message user">
+      <div class="bubble">最近总是感觉疲倦乏力，容易出汗，而且没什么胃口，吃一点就胀肚子。</div>
+      <div class="avatar user">患</div>
+    </div>
+
+    <div class="message ai">
+      <div class="avatar ai">医</div>
+      <div class="bubble">
+        观阁下所述症状，此乃<b>「气虚湿阻」</b>之象。
+        <div class="analysis-card">
+          <div class="tag-group">
+            <div class="tag t1">气虚质</div>
+            <div class="tag t2">脾胃虚弱</div>
+          </div>
+          <div class="divider"></div>
+          <div class="advice-title"><i class="ri-bowl-line"></i> 食疗方略</div>
+          <div class="advice-content">宜食健脾祛湿之品，如山药、茯苓、白扁豆、陈皮。忌生冷寒凉。</div>
+          <div class="divider"></div>
+          <div class="advice-title"><i class="ri-hand-heart-line"></i> 调养建议</div>
+          <div class="advice-content">起居有常，不妄作劳。可每日按揉足三里穴，以补中益气。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="quick-tags">
+      <div class="quick-tag">失眠多梦</div>
+      <div class="quick-tag">心烦易怒</div>
+      <div class="quick-tag">手足冰凉</div>
+      <div class="quick-tag">食欲不振</div>
+    </div>
+    <div class="input-box">
+      <input type="text" class="text-input" placeholder="请描述您的症状...">
+      <div class="send-btn"><i class="ri-send-plane-fill"></i></div>
+    </div>
+  </div>
+</body>
+</html>

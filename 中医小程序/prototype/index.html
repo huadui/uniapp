@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>中医智能问答小程序 - 原型概览</title>
+  <style>
+    :root {
+      --phone-width: 393px;
+      --phone-height: 852px;
+      --phone-radius: 40px;
+      --phone-border: 12px;
+      --bg-color: #eef2f5;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 40px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .header p {
+      color: #666;
+      font-size: 16px;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 60px;
+      justify-items: center;
+      max-width: 1800px;
+      margin: 0 auto;
+    }
+
+    .phone-wrapper {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .phone-label {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #444;
+      background: #fff;
+      padding: 8px 20px;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    .phone-frame {
+      width: calc(var(--phone-width) + var(--phone-border) * 2);
+      height: calc(var(--phone-height) + var(--phone-border) * 2);
+      background: #1a1a1a;
+      border-radius: 55px;
+      padding: var(--phone-border);
+      box-shadow: 
+        0 0 0 2px #333,
+        0 20px 50px rgba(0,0,0,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 灵动岛/刘海模拟 */
+    .notch {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 35px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 100;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #fff;
+      border-radius: var(--phone-radius);
+      /* 模拟手机屏幕的物理圆角 */
+      mask-image: radial-gradient(white, black);
+      -webkit-mask-image: -webkit-radial-gradient(white, black);
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>中医智能问答小程序 - 原型设计概览</h1>
+    <p>基于 iPhone 15 Pro 规格 (393x852px) · 纯 HTML/CSS 实现 · 模拟 UniApp 效果</p>
+  </div>
+
+  <div class="grid-container">
+    <!-- 登录页 -->
+    <div class="phone-wrapper">
+      <div class="phone-frame">
+        <div class="notch"></div>
+        <iframe src="login.html" loading="lazy"></iframe>
+      </div>
+      <div class="phone-label">登录页 (Login)</div>
+    </div>
+
+    <!-- 首页 -->
+    <div class="phone-wrapper">
+      <div class="phone-frame">
+        <div class="notch"></div>
+        <iframe src="home.html" loading="lazy"></iframe>
+      </div>
+      <div class="phone-label">首页 (Home)</div>
+    </div>
+
+    <!-- 症状问答 -->
+    <div class="phone-wrapper">
+      <div class="phone-frame">
+        <div class="notch"></div>
+        <iframe src="symptom-chat.html" loading="lazy"></iframe>
+      </div>
+      <div class="phone-label">症状问答 (Chat)</div>
+    </div>
+
+    <!-- 舌象识别 -->
+    <div class="phone-wrapper">
+      <div class="phone-frame">
+        <div class="notch"></div>
+        <iframe src="tongue-scan.html" loading="lazy"></iframe>
+      </div>
+      <div class="phone-label">舌象识别 (Vision)</div>
+    </div>
+
+    <!-- 面相识别 -->
+    <div class="phone-wrapper">
+      <div class="phone-frame">
+        <div class="notch"></div>
+        <iframe src="face-scan.html" loading="lazy"></iframe>
+      </div>
+      <div class="phone-label">面相识别 (Vision)</div>
+    </div>
+
+    <!-- 体质评估 -->
+    <div class="phone-wrapper">
+      <div class="phone-frame">
+        <div class="notch"></div>
+        <iframe src="constitution-test.html" loading="lazy"></iframe>
+      </div>
+      <div class="phone-label">体质评估 (Test)</div>
+    </div>
+
+    <!-- 历史记录 -->
+    <div class="phone-wrapper">
+      <div class="phone-frame">
+        <div class="notch"></div>
+        <iframe src="history.html" loading="lazy"></iframe>
+      </div>
+      <div class="phone-label">历史记录 (History)</div>
+    </div>
+
+    <!-- 个人中心 -->
+    <div class="phone-wrapper">
+      <div class="phone-frame">
+        <div class="notch"></div>
+        <iframe src="profile.html" loading="lazy"></iframe>
+      </div>
+      <div class="phone-label">个人中心 (Profile)</div>
+    </div>
+  </div>
+</body>
+</html>

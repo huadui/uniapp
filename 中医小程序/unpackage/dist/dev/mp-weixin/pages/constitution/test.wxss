@@ -1,0 +1,176 @@
+
+.test-container.data-v-36d0b53b {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #F7F5F0;
+  background-image: radial-gradient(#E8E6E1 1px, transparent 1px);
+  background-size: 20px 20px;
+  color: #333;
+  font-family: "PingFang SC", "Kaiti SC", serif;
+}
+
+/* 顶部导航 */
+.navbar.data-v-36d0b53b {
+  background: rgba(247, 245, 240, 0.95);
+  padding: 12px 20px;
+  padding-top: calc(44px + env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #E8E0D5;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.nav-left.data-v-36d0b53b { font-size: 24px; color: #555; width: 40px;}
+.nav-title.data-v-36d0b53b { font-size: 18px; font-weight: 600; color: #333;
+}
+.nav-right.data-v-36d0b53b { width: 40px;
+}
+
+/* 进度区域 */
+.progress-container.data-v-36d0b53b {
+  padding: 20px 24px;
+  padding-bottom: 10px;
+}
+.progress-info.data-v-36d0b53b {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #666;
+  font-family: "PingFang SC", sans-serif;
+}
+.progress-track.data-v-36d0b53b {
+  height: 8px;
+  background: #E8E0D5;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(139, 90, 43, 0.1);
+}
+.progress-bar.data-v-36d0b53b {
+  height: 100%;
+  background: #8B5A2B;
+  width: 30%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* 主要内容区 */
+.content.data-v-36d0b53b {
+  flex: 1;
+  padding: 20px 24px;
+  overflow-y: auto;
+}
+
+/* 问题卡片 */
+.question-card.data-v-36d0b53b {
+  background: #FFFEFA;
+  border-radius: 12px;
+  padding: 30px 24px;
+  box-shadow: 0 4px 16px rgba(139, 90, 43, 0.08);
+  border: 1px solid #E8E0D5;
+  margin-bottom: 20px;
+  position: relative;
+}
+.question-card.data-v-36d0b53b::before {
+  content: '';
+  position: absolute;
+  top: 6px; left: 6px; right: 6px; bottom: 6px;
+  border: 1px solid rgba(139, 90, 43, 0.1);
+  border-radius: 8px;
+  pointer-events: none;
+}
+.q-tag.data-v-36d0b53b {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #FBF5E6;
+  color: #8B5A2B;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(139, 90, 43, 0.2);
+}
+.q-text.data-v-36d0b53b {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c2c2c;
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+/* 选项列表 */
+.options.data-v-36d0b53b {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.option-item.data-v-36d0b53b {
+  position: relative;
+  padding: 16px 20px;
+  background: #fff;
+  border: 1px solid #E0D8CE;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s;
+}
+.option-item.data-v-36d0b53b:active { background: #F9F7F2;
+}
+.option-item.selected.data-v-36d0b53b {
+  border-color: #8B5A2B;
+  background: #FBF5E6;
+  color: #8B5A2B;
+  font-weight: 600;
+}
+.radio-icon.data-v-36d0b53b {
+  width: 20px; height: 20px;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.option-item.selected .radio-icon.data-v-36d0b53b {
+  border-color: #8B5A2B;
+  background: #8B5A2B;
+  color: #fff;
+}
+.radio-icon.data-v-36d0b53b::after { content: '';
+}
+.option-item.selected .radio-icon.data-v-36d0b53b::after { content: '✓'; font-size: 12px;
+}
+
+/* 底部按钮 */
+.actions-bar.data-v-36d0b53b {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 16px 24px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  border-top: 1px solid #E8E0D5;
+  display: flex;
+  gap: 16px;
+}
+.btn.data-v-36d0b53b {
+  flex: 1;
+  height: 50px;
+  border-radius: 25px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: "PingFang SC", sans-serif;
+  display: flex; align-items: center; justify-content: center;
+}
+.btn-prev.data-v-36d0b53b {
+  background: #F0EBE5;
+  color: #666;
+  border: 1px solid #E0D8CE;
+}
+.btn-next.data-v-36d0b53b {
+  background: #8B5A2B;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(139, 90, 43, 0.3);
+}

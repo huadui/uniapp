@@ -1,0 +1,239 @@
+
+.home-container.data-v-1cf27b2a {
+  min-height: 100vh;
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background-color: #F7F5F0;
+  background-image: radial-gradient(#E8E6E1 1px, transparent 1px); /* 模拟纸张纹理 */
+  background-size: 20px 20px;
+  padding-bottom: 90px;
+  color: #4A4A4A;
+}
+
+/* 顶部区域 - 新中式风格 */
+.header.data-v-1cf27b2a {
+  background: linear-gradient(180deg, #8B5A2B 0%, #A67B51 100%);
+  padding: 20px;
+  padding-top: calc(60px + env(safe-area-inset-top));
+  border-radius: 0 0 30px 30px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(139, 90, 43, 0.2);
+}
+
+/* 云纹装饰背景 */
+.header.data-v-1cf27b2a::after {
+  content: '';
+  position: absolute;
+  right: -20px;
+  bottom: -40px;
+  width: 200px;
+  height: 200px;
+  background: url('data:image/svg+xml;utf8,<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path fill="%23ffffff" fill-opacity="0.1" d="M45.7,123.5c-10.2,0-18.5-8.3-18.5-18.5s8.3-18.5,18.5-18.5c3.2,0,6.2,0.8,8.9,2.3c2.5-9.7,11.3-16.8,21.7-16.8 c12.4,0,22.5,10.1,22.5,22.5c0,1.2-0.1,2.4-0.3,3.5c8.5,2.3,14.8,10,14.8,19.2c0,11-8.9,19.9-19.9,19.9H45.7z"/></svg>') no-repeat;
+  background-size: contain;
+  opacity: 0.6;
+  pointer-events: none;
+}
+.user-row.data-v-1cf27b2a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 2;
+}
+.greeting-box.data-v-1cf27b2a { color: #fff;
+}
+.greeting-time.data-v-1cf27b2a { font-size: 14px; opacity: 0.9; font-family: "Kaiti SC", "STKaiti", serif;
+}
+.greeting-text.data-v-1cf27b2a { font-size: 22px; font-weight: 600; margin-top: 4px;
+}
+.avatar.data-v-1cf27b2a { 
+  width: 48px; height: 48px; 
+  background: rgba(255,255,255,0.2); 
+  border: 2px solid rgba(255,255,255,0.4); 
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 24px;
+}
+
+/* 节气卡片 */
+.solar-card.data-v-1cf27b2a {
+  background: rgba(255,255,255,0.95);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  z-index: 2;
+}
+.solar-icon.data-v-1cf27b2a {
+  width: 44px; height: 44px;
+  background: #8B5A2B;
+  color: #fff;
+  border-radius: 8px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  font-family: "Kaiti SC", "STKaiti", serif;
+  line-height: 1.1;
+  box-shadow: 0 2px 8px rgba(139, 90, 43, 0.3);
+}
+.solar-name.data-v-1cf27b2a { font-size: 16px; font-weight: bold;
+}
+.solar-date.data-v-1cf27b2a { font-size: 10px; opacity: 0.8;
+}
+.solar-info.data-v-1cf27b2a { flex: 1;
+}
+.solar-tip.data-v-1cf27b2a { font-size: 14px; color: #555; font-weight: 500; margin-bottom: 4px;
+}
+.solar-desc.data-v-1cf27b2a { font-size: 12px; color: #888;
+}
+
+/* 功能网格 - 卷轴式设计 */
+.grid-section.data-v-1cf27b2a {
+  padding: 24px 20px;
+}
+.grid-container.data-v-1cf27b2a {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.feature-card.data-v-1cf27b2a {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(139, 90, 43, 0.08);
+  position: relative;
+  border: 1px solid rgba(139, 90, 43, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.2s;
+}
+.feature-card.data-v-1cf27b2a:active { transform: scale(0.98);
+}
+
+/* 边角装饰 */
+.corner-deco.data-v-1cf27b2a {
+  position: absolute;
+  width: 12px; height: 12px;
+  border: 2px solid #8B5A2B;
+  opacity: 0.3;
+}
+.top-left.data-v-1cf27b2a { top: 8px; left: 8px; border-right: none; border-bottom: none;
+}
+.top-right.data-v-1cf27b2a { top: 8px; right: 8px; border-left: none; border-bottom: none;
+}
+.bottom-left.data-v-1cf27b2a { bottom: 8px; left: 8px; border-right: none; border-top: none;
+}
+.bottom-right.data-v-1cf27b2a { bottom: 8px; right: 8px; border-left: none; border-top: none;
+}
+.card-icon-box.data-v-1cf27b2a {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  margin-bottom: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+}
+.bg-ink.data-v-1cf27b2a { background: #F0EBE5; color: #4A4A4A;
+} /* 墨灰 */
+.bg-red.data-v-1cf27b2a { background: #FBE8E6; color: #C84C42;
+} /* 丹红 */
+.bg-green.data-v-1cf27b2a { background: #E9F0EA; color: #5D7A69;
+} /* 竹青 */
+.bg-gold.data-v-1cf27b2a { background: #FBF5E6; color: #B8860B;
+} /* 藤黄 */
+.card-title.data-v-1cf27b2a { 
+  font-size: 16px; 
+  font-weight: bold; 
+  color: #333; 
+  font-family: "Kaiti SC", "STKaiti", serif; 
+  margin-bottom: 4px;
+}
+.card-desc.data-v-1cf27b2a { font-size: 12px; color: #999;
+}
+
+/* 每日精选 */
+.section-header.data-v-1cf27b2a {
+  padding: 0 20px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-mark.data-v-1cf27b2a {
+  width: 4px; height: 18px;
+  background: #8B5A2B;
+  border-radius: 2px;
+}
+.section-title.data-v-1cf27b2a {
+  font-size: 18px;
+  font-weight: bold;
+  font-family: "Kaiti SC", "STKaiti", serif;
+  color: #333;
+}
+.article-list.data-v-1cf27b2a { padding: 0 20px;
+}
+.article-item.data-v-1cf27b2a {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(139, 90, 43, 0.08);
+  border-left: 3px solid transparent;
+}
+.article-item.data-v-1cf27b2a:active { border-left-color: #8B5A2B; background: #f9f9f9;
+}
+.article-thumb.data-v-1cf27b2a {
+  width: 80px; height: 80px;
+  background: #eee;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  background: #D8D0C5; 
+  color: #8B5A2B;
+}
+.article-thumb img.data-v-1cf27b2a { width: 100%; height: 100%; object-fit: cover; opacity: 0.8;
+}
+.article-info.data-v-1cf27b2a { flex: 1; display: flex; flex-direction: column; justify-content: space-between;
+}
+.article-title.data-v-1cf27b2a { font-size: 15px; font-weight: 600; line-height: 1.5; color: #333;
+}
+.article-tags.data-v-1cf27b2a { display: flex; gap: 8px;
+}
+.tag.data-v-1cf27b2a { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: #F5F5F5; color: #888;
+}
+
+/* 底部导航 - 悬浮式 */
+.tabbar.data-v-1cf27b2a {
+  position: fixed;
+  bottom: 20px;
+  left: 20px; right: 20px;
+  height: 60px;
+  background: #fff;
+  border-radius: 30px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+  border: 1px solid rgba(0,0,0,0.05);
+  z-index: 100;
+}
+.tab-item.data-v-1cf27b2a {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: #999;
+  flex: 1; height: 100%;
+}
+.tab-item.active.data-v-1cf27b2a { color: #8B5A2B;
+}
+.tab-icon.data-v-1cf27b2a { font-size: 24px; margin-bottom: 2px;
+}
+.tab-text.data-v-1cf27b2a { font-size: 10px; font-weight: 500;
+}

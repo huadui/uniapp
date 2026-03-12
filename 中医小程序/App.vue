@@ -1,0 +1,70 @@
+<script>
+	export default {
+		onLaunch: function() {
+			console.log('App Launch')
+		},
+		onShow: function() {
+			console.log('App Show')
+		},
+		onHide: function() {
+			console.log('App Hide')
+		}
+	}
+</script>
+
+<style>
+	/*每个页面公共css */
+	
+	/* 定义 RemixIcon 字体 - 使用远程 CDN */
+	@font-face {
+	  font-family: 'remixicon';
+	  src: url('https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.woff2?t=1692415959673') format('woff2'),
+	       url('https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.woff?t=1692415959673') format('woff'),
+	       url('https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.ttf?t=1692415959673') format('truetype');
+	  font-display: swap;
+	}
+	
+	[class^="ri-"], [class*=" ri-"] {
+	  font-family: 'remixicon' !important;
+	  font-style: normal;
+	  -webkit-font-smoothing: antialiased;
+	  -moz-osx-font-smoothing: grayscale;
+	}
+	
+	/* 常用图标定义 */
+	.ri-user-line:before { content: "\f264"; }
+	.ri-arrow-left-s-line:before { content: "\ea64"; }
+	.ri-send-plane-fill:before { content: "\f0d9"; }
+	.ri-question-answer-line:before { content: "\f04f"; }
+	.ri-camera-lens-line:before { content: "\eb39"; }
+	.ri-emotion-line:before { content: "\ec94"; }
+	.ri-file-list-3-line:before { content: "\f42f"; }
+	.ri-cup-line:before { content: "\eb63"; }
+	.ri-book-open-line:before { content: "\eafd"; }
+	.ri-home-smile-2-line:before { content: "\ee2e"; }
+	.ri-history-line:before { content: "\ee12"; }
+	.ri-user-3-line:before { content: "\f266"; }
+	.ri-heart-pulse-line:before { content: "\ee06"; }
+	.ri-settings-4-line:before { content: "\f0e6"; }
+	.ri-question-line:before { content: "\f044"; }
+	.ri-shield-check-line:before { content: "\f0d1"; }
+	.ri-arrow-right-s-line:before { content: "\ea6e"; }
+	.ri-delete-bin-line:before { content: "\ec22"; }
+	.ri-wechat-fill:before { content: "\f298"; }
+	.ri-bowl-line:before { content: "\eb19"; }
+	.ri-hand-heart-line:before { content: "\edeb"; }
+	
+	:root {
+		--primary-color: #8B5A2B;
+		--secondary-color: #5D7A69;
+		--bg-color: #F7F5F0;
+		--card-bg: #FFFFFF;
+		--text-main: #4A4A4A;
+	}
+	
+	/* 基础字体设置 */
+	page {
+		font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+		background-color: var(--bg-color);
+	}
+</style>

@@ -1,0 +1,152 @@
+
+.profile-container.data-v-dd383ca2 {
+  min-height: 100vh;
+  padding-bottom: 90px;
+  background-color: #F7F5F0;
+  background-image: radial-gradient(#E8E6E1 1px, transparent 1px);
+  background-size: 20px 20px;
+  color: #4A4A4A;
+  font-family: "PingFang SC", "Kaiti SC", serif;
+}
+
+/* 头部区域 */
+.header.data-v-dd383ca2 {
+  background: linear-gradient(180deg, #8B5A2B 0%, #A67B51 100%);
+  padding: 30px 20px;
+  padding-top: calc(60px + env(safe-area-inset-top));
+  border-radius: 0 0 30px 30px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(139, 90, 43, 0.2);
+}
+
+/* 云纹装饰 */
+.header.data-v-dd383ca2::before {
+  content: '';
+  position: absolute;
+  left: -20px; top: -20px;
+  width: 150px; height: 150px;
+  background: url('data:image/svg+xml;utf8,<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="80" fill="none" stroke="white" stroke-opacity="0.1" stroke-width="20"/></svg>') no-repeat;
+  background-size: contain;
+  pointer-events: none;
+}
+.user-info.data-v-dd383ca2 { 
+  display: flex; align-items: center; gap: 16px; margin-bottom: 24px; 
+  position: relative; z-index: 2;
+}
+.avatar.data-v-dd383ca2 {
+  width: 64px; height: 64px;
+  background: rgba(255,255,255,0.2);
+  border: 2px solid rgba(255,255,255,0.4);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; color: #fff;
+}
+.info-text.data-v-dd383ca2 { flex: 1;
+}
+.nickname.data-v-dd383ca2 { font-size: 20px; font-weight: 600; margin-bottom: 4px; font-family: "Kaiti SC", "STKaiti", serif;
+}
+.uid.data-v-dd383ca2 { font-size: 12px; opacity: 0.8; font-family: monospace;
+}
+
+/* 数据统计卡片 */
+.stats-card.data-v-dd383ca2 {
+  background: rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 20px;
+  -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
+  display: flex;
+  position: relative;
+  z-index: 2;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.stat-item.data-v-dd383ca2 { 
+  flex: 1; 
+  text-align: center; 
+  position: relative;
+}
+.stat-item.data-v-dd383ca2:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 20%; bottom: 20%;
+  width: 1px;
+  background: rgba(255,255,255,0.2);
+}
+.stat-num.data-v-dd383ca2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; font-family: "Times New Roman", serif;
+}
+.stat-label.data-v-dd383ca2 { font-size: 12px; opacity: 0.9; font-family: "Kaiti SC", "STKaiti", serif;
+}
+
+/* 菜单区域 */
+.menu-group.data-v-dd383ca2 {
+  background: #fff;
+  border-radius: 16px;
+  margin: 0 20px 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(139, 90, 43, 0.05);
+  border: 1px solid #E8E0D5;
+}
+.menu-item.data-v-dd383ca2 {
+  display: flex;
+  align-items: center;
+  padding: 18px 20px;
+  border-bottom: 1px solid #F5F0EB;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.menu-item.data-v-dd383ca2:last-child { border-bottom: none;
+}
+.menu-item.data-v-dd383ca2:active { background: #F9F7F2;
+}
+.menu-icon.data-v-dd383ca2 { 
+  font-size: 20px; 
+  margin-right: 14px; 
+  color: #8B5A2B; 
+  width: 24px; text-align: center;
+}
+.menu-text.data-v-dd383ca2 { flex: 1; font-size: 15px; color: #333; font-weight: 500;
+}
+.menu-arrow.data-v-dd383ca2 { color: #ccc; font-size: 16px;
+}
+.logout-btn.data-v-dd383ca2 {
+  margin: 30px 20px;
+  background: #fff;
+  color: #C84C42;
+  text-align: center;
+  padding: 14px;
+  border-radius: 25px;
+  font-weight: 600;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  border: 1px solid #E8E0D5;
+  font-family: "Kaiti SC", "STKaiti", serif;
+}
+
+/* 底部 Tab */
+.tabbar.data-v-dd383ca2 {
+  position: fixed;
+  bottom: 20px;
+  left: 20px; right: 20px;
+  height: 60px;
+  background: #fff;
+  border-radius: 30px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+  border: 1px solid rgba(0,0,0,0.05);
+  z-index: 100;
+}
+.tab-item.data-v-dd383ca2 {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: #999;
+  flex: 1; height: 100%;
+}
+.tab-item.active.data-v-dd383ca2 { color: #8B5A2B;
+}
+.tab-icon.data-v-dd383ca2 { font-size: 24px; margin-bottom: 2px;
+}
+.tab-text.data-v-dd383ca2 { font-size: 10px; font-weight: 500;
+}

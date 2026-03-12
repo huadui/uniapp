@@ -1,0 +1,148 @@
+
+.diag-container.data-v-11c84774 {
+  min-height: 100vh;
+  background-color: #F7F5F0;
+  font-family: "PingFang SC", "Kaiti SC", serif;
+  display: flex;
+  flex-direction: column;
+}
+.navbar.data-v-11c84774 {
+  background: rgba(247, 245, 240, 0.95);
+  padding: 12px 16px;
+  padding-top: calc(44px + env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.nav-title.data-v-11c84774 { flex: 1; text-align: center; font-size: 18px; font-weight: 600; color: #333;
+}
+.back-icon.data-v-11c84774 { width: 40px; font-size: 24px;
+}
+.nav-right.data-v-11c84774 { width: 40px;
+}
+
+/* 拍摄区 */
+.camera-section.data-v-11c84774 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  align-items: center;
+  justify-content: center;
+}
+.camera-placeholder.data-v-11c84774 {
+  width: 280px;
+  height: 380px;
+  background: #E8E0D5;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+  border: 2px dashed #C8B8A8;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+}
+.camera-mask.data-v-11c84774 {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.1);
+  pointer-events: none;
+  z-index: 1;
+}
+.tongue-outline.data-v-11c84774 {
+  width: 160px;
+  height: 240px;
+  border: 2px solid rgba(255,255,255,0.6);
+  border-radius: 80px 80px 60px 60px;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+.camera-tips.data-v-11c84774 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #8B5A2B;
+  z-index: 2;
+}
+.camera-tips i.data-v-11c84774 { font-size: 48px; margin-bottom: 12px;
+}
+.sub-tip.data-v-11c84774 { font-size: 12px; opacity: 0.7; margin-top: 8px; max-width: 80%; text-align: center;
+}
+.preview-img.data-v-11c84774 {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 0;
+}
+.action-btn.data-v-11c84774 {
+  width: 80%;
+  height: 50px;
+  background: #8B5A2B;
+  color: #fff;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 12px rgba(139, 90, 43, 0.3);
+}
+.action-btn[disabled].data-v-11c84774 { background: #D8D0C5; box-shadow: none;
+}
+
+/* 结果区 */
+.result-section.data-v-11c84774 {
+  padding: 20px;
+}
+.result-header.data-v-11c84774 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.result-title.data-v-11c84774 { font-size: 20px; font-weight: 600; color: #333;
+}
+.re-btn.data-v-11c84774 { font-size: 14px; color: #8B5A2B; border: 1px solid #8B5A2B; padding: 4px 12px; border-radius: 15px;
+}
+.result-card.data-v-11c84774 {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(139, 90, 43, 0.08);
+}
+.diag-row.data-v-11c84774 {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed #eee;
+}
+.diag-label.data-v-11c84774 { color: #666;
+}
+.diag-val.data-v-11c84774 { font-weight: 600; font-size: 16px;
+}
+.diag-val.red.data-v-11c84774 { color: #C84C42;
+}
+.diag-val.yellow.data-v-11c84774 { color: #B8860B;
+}
+.divider.data-v-11c84774 { height: 1px; background: #eee; margin: 0 -24px 20px;
+}
+.diagnosis-main.data-v-11c84774 { margin-bottom: 24px;
+}
+.d-title.data-v-11c84774 { font-size: 18px; font-weight: 600; color: #333; margin-bottom: 8px;
+}
+.d-desc.data-v-11c84774 { font-size: 14px; color: #555; line-height: 1.6;
+}
+.suggestion-box.data-v-11c84774 {
+  background: #F9F7F2;
+  padding: 16px;
+  border-radius: 8px;
+}
+.s-title.data-v-11c84774 { font-weight: bold; color: #5D7A69; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+}
+.s-item.data-v-11c84774 { font-size: 13px; color: #666; line-height: 1.8;
+}

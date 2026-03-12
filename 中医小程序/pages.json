@@ -1,0 +1,67 @@
+{
+	"pages": [
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "首页",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/symptom-chat/symptom-chat",
+			"style": {
+				"navigationBarTitleText": "问诊脉络",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/constitution/test",
+			"style": {
+				"navigationBarTitleText": "体质辨识",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/history/history",
+			"style": {
+				"navigationBarTitleText": "医案记录",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/profile/profile",
+			"style": {
+				"navigationBarTitleText": "个人中心",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/diagnosis/tongue",
+			"style": {
+				"navigationBarTitleText": "观舌知病",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/diagnosis/face",
+			"style": {
+				"navigationBarTitleText": "望面察色",
+				"navigationStyle": "custom"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"uniIdRouter": {}
+}

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>体质辨识</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #8B5A2B; /* 赭石 */
+      --primary-light: #FBF5E6;
+      --bg: #F7F5F0;
+      --card-bg: #FFFFFF;
+      --text-main: #333333;
+      --border: #E8E0D5;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    
+    body {
+      font-family: "PingFang SC", "Kaiti SC", "STKaiti", serif;
+      background-color: var(--bg);
+      background-image: radial-gradient(#E8E6E1 1px, transparent 1px);
+      background-size: 20px 20px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      color: var(--text-main);
+    }
+
+    /* 顶部导航 */
+    .navbar {
+      background: rgba(247, 245, 240, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 12px 20px;
+      padding-top: calc(44px + env(safe-area-inset-top));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-left { font-size: 22px; color: #555; }
+    .nav-title { font-size: 18px; font-weight: 600; color: #333; }
+    .nav-right { width: 24px; }
+
+    /* 进度区域 - 卷轴风格 */
+    .progress-container {
+      padding: 20px 24px;
+      padding-bottom: 10px;
+    }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: #666;
+      font-family: "PingFang SC", sans-serif;
+    }
+    
+    .progress-track {
+      height: 8px;
+      background: #E8E0D5;
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(139, 90, 43, 0.1);
+    }
+    
+    .progress-bar {
+      height: 100%;
+      background: url('data:image/svg+xml;utf8,<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M0 40L40 0H20L0 20M40 40V20L20 40" fill="%23A67B51" fill-opacity="0.1"/></svg>') var(--primary);
+      width: 30%;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    /* 主要内容区 */
+    .content {
+      flex: 1;
+      padding: 20px 24px;
+      overflow-y: auto;
+    }
+
+    /* 问题卡片 - 宣纸质感 */
+    .question-card {
+      background: #FFFEFA;
+      border-radius: 12px;
+      padding: 30px 24px;
+      box-shadow: 0 4px 16px rgba(139, 90, 43, 0.08);
+      border: 1px solid #E8E0D5;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    
+    /* 四角装饰 */
+    .question-card::before {
+      content: '';
+      position: absolute;
+      top: 6px; left: 6px; right: 6px; bottom: 6px;
+      border: 1px solid rgba(139, 90, 43, 0.1);
+      border-radius: 8px;
+      pointer-events: none;
+    }
+
+    .q-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 4px;
+      font-size: 12px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(139, 90, 43, 0.2);
+    }
+
+    .q-text {
+      font-size: 20px;
+      font-weight: 600;
+      color: #2c2c2c;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    /* 选项列表 */
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .option-item {
+      position: relative;
+      padding: 16px 20px;
+      background: #fff;
+      border: 1px solid #E0D8CE;
+      border-radius: 8px;
+      font-size: 16px;
+      color: #555;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .option-item:active { background: #F9F7F2; }
+
+    .option-item.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .radio-icon {
+      width: 20px; height: 20px;
+      border: 1px solid #ccc;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .option-item.selected .radio-icon {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+    
+    .radio-icon::after { content: ''; }
+    .option-item.selected .radio-icon::after { content: '✓'; font-size: 12px; }
+
+    /* 底部按钮 */
+    .actions-bar {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 16px 24px;
+      padding-bottom: calc(16px + env(safe-area-inset-bottom));
+      border-top: 1px solid #E8E0D5;
+      display: flex;
+      gap: 16px;
+    }
+
+    .btn {
+      flex: 1;
+      height: 50px;
+      border-radius: 25px;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: "PingFang SC", sans-serif;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .btn-prev {
+      background: #F0EBE5;
+      color: #666;
+      border: 1px solid #E0D8CE;
+    }
+
+    .btn-next {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(139, 90, 43, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="nav-left"><i class="ri-arrow-left-s-line"></i></div>
+    <div class="nav-title">体质辨识</div>
+    <div class="nav-right"></div>
+  </div>
+
+  <div class="progress-container">
+    <div class="progress-info">
+      <span>当前进度</span>
+      <span>3 / 10</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-bar"></div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="question-card">
+      <span class="q-tag">气虚相关</span>
+      <div class="q-text">您是否容易感到疲乏，精神不振，且稍微活动后就容易出汗？</div>
+      
+      <div class="options">
+        <div class="option-item">
+          <span>没有 (根本不)</span>
+          <div class="radio-icon"></div>
+        </div>
+        <div class="option-item">
+          <span>很少 (有一点)</span>
+          <div class="radio-icon"></div>
+        </div>
+        <div class="option-item selected">
+          <span>有时 (有些)</span>
+          <div class="radio-icon"></div>
+        </div>
+        <div class="option-item">
+          <span>经常 (相当)</span>
+          <div class="radio-icon"></div>
+        </div>
+        <div class="option-item">
+          <span>总是 (非常)</span>
+          <div class="radio-icon"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions-bar">
+    <button class="btn btn-prev">上一题</button>
+    <button class="btn btn-next">下一题</button>
+  </div>
+
+  <script>
+    const options = document.querySelectorAll('.option-item');
+    options.forEach(opt => {
+      opt.addEventListener('click', () => {
+        options.forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+      });
+    });
+  </script>
+</body>
+</html>

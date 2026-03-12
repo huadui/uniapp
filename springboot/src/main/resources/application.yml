@@ -1,0 +1,40 @@
+server:
+  port: 8080
+  tomcat:
+    max-http-form-post-size: 50MB
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/xcx?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 4123343321aA
+  
+wechat:
+  appid: wxcecec8ec357ea0e5 # 请替换为你的小程序AppID
+  secret: **** # 请替换为你的小程序AppSecret
+
+deepseek:
+  api-key: ****
+  base-url: https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+  model: qwen-omni-turbo
+  vl-model: qwen-vl-max
+
+aliyun:
+  oss:
+    endpoint: ****
+    access-key-id: ****
+    access-key-secret: ****
+    bucket-name: ****
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: auto

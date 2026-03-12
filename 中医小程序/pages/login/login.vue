@@ -1,0 +1,316 @@
+<template>
+  <div class="login-container">
+    <div class="bg-decoration"></div>
+
+    <div class="logo-area">
+      <div class="logo-seal"></div>
+      <div class="app-name">中医智能问答</div>
+      <div class="slogan">承古纳今 · 智问医道</div>
+    </div>
+    
+    <div class="login-card">
+      <div class="corner c-tl"></div>
+      <div class="corner c-tr"></div>
+      <div class="corner c-bl"></div>
+      <div class="corner c-br"></div>
+
+      <div class="welcome-text">欢迎阁下</div>
+      
+      <button class="login-btn" @click="handleLogin">
+        <i class="ri-wechat-fill" style="font-size: 20px;"></i>
+        <span>微信一键登录</span>
+      </button>
+      
+      <div class="agreement-box">
+        <div class="checkbox" :class="{ checked: isAgreed }" @click="toggleAgree"></div>
+        <span>我已阅读并同意 <text class="link">用户协议</text></span>
+      </div>
+    </div>
+
+    <div class="footer">
+      AI 赋能传统医学 · 仅供健康参考
+    </div>
+  </div>
+</template>
+
+<script>
+import { login } from '@/api/user.js';
+
+export default {
+  data() {
+    return {
+      isAgreed: false
+    }
+  },
+  methods: {
+    toggleAgree() {
+      this.isAgreed = !this.isAgreed;
+    },
+    handleLogin() {
+      if (!this.isAgreed) {
+        uni.showToast({
+          title: '请先同意用户协议',
+          icon: 'none'
+        });
+        return;
+      }
+      
+      const that = this;
+      
+      // 1. Get User Profile (Nickname, Avatar)
+      // Note: This must be triggered by a user tap
+      uni.getUserProfile({
+        desc: '用于完善会员资料',
+        success: (res) => {
+          const userInfo = res.userInfo;
+          
+          uni.showLoading({
+            title: '登录中...'
+          });
+          
+          // 2. Get Login Code
+          uni.login({
+            provider: 'weixin',
+            success: (loginRes) => {
+              if (loginRes.code) {
+                // 3. Call Backend Login API
+                const loginDTO = {
+                  code: loginRes.code,
+                  nickname: userInfo.nickName,
+                  avatarUrl: userInfo.avatarUrl,
+                  gender: userInfo.gender
+                };
+                
+                login(loginDTO).then(response => {
+                  uni.hideLoading();
+                  // Save user info to storage
+                  uni.setStorageSync('userInfo', response.data);
+                  
+                  uni.showToast({
+                    title: '登录成功',
+                    icon: 'success'
+                  });
+                  
+                  setTimeout(() => {
+                    uni.reLaunch({
+                      url: '/pages/index/index'
+                    });
+                  }, 1500);
+                }).catch(error => {
+                  uni.hideLoading();
+                  console.error('Login failed:', error);
+                });
+              } else {
+                uni.hideLoading();
+                uni.showToast({
+                  title: '获取登录凭证失败',
+                  icon: 'none'
+                });
+              }
+            },
+            fail: (err) => {
+              uni.hideLoading();
+              console.error('uni.login failed:', err);
+              uni.showToast({
+                title: '登录失败',
+                icon: 'none'
+              });
+            }
+          });
+        },
+        fail: (err) => {
+          console.log('getUserProfile failed or cancelled:', err);
+          uni.showToast({
+            title: '需要授权才能登录',
+            icon: 'none'
+          });
+        }
+      });
+    }
+  }
+}
+</script>
+
+<style scoped>
+.login-container {
+  font-family: "Kaiti SC", "STKaiti", "PingFang SC", serif;
+  background-color: #F7F5F0;
+  background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M0 100 C 20 0 50 0 100 100 Z" fill="none" stroke="%23E8E6E1" opacity="0.5"/></svg>'), radial-gradient(#E8E6E1 1px, transparent 1px);
+  background-size: 200px 200px, 20px 20px;
+  background-position: bottom center, center;
+  background-repeat: no-repeat, repeat;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: env(safe-area-inset-top);
+  color: #4A4A4A;
+  overflow: hidden;
+  position: relative;
+}
+
+/* 装饰纹样 */
+.bg-decoration {
+  position: absolute;
+  top: -10%; right: -20%;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(139,90,43,0.05) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.logo-area {
+  text-align: center;
+  margin-bottom: 50px;
+  position: relative;
+  z-index: 2;
+}
+
+/* 印章风格 Logo */
+.logo-seal {
+  width: 100px;
+  height: 100px;
+  background: #C84C42;
+  border-radius: 12px;
+  margin: 0 auto 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(200, 76, 66, 0.2);
+  position: relative;
+  border: 4px double rgba(255,255,255,0.3);
+}
+
+.logo-seal::after {
+  content: '医';
+  font-size: 56px;
+  color: #fff;
+  font-weight: bold;
+  font-family: "Kaiti SC", "STKaiti", serif;
+  border: 2px solid #fff;
+  width: 76px; height: 76px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+}
+
+.app-name {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: #333;
+  letter-spacing: 4px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.slogan {
+  font-size: 16px;
+  color: #888;
+  letter-spacing: 2px;
+  position: relative;
+  display: inline-block;
+  padding: 0 20px;
+}
+
+.slogan::before, .slogan::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 12px; height: 1px;
+  background: #ccc;
+}
+.slogan::before { left: 0; }
+.slogan::after { right: 0; }
+
+/* 登录卡片 */
+.login-card {
+  width: 85%;
+  max-width: 340px;
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid #E8E0D5;
+  border-radius: 20px;
+  padding: 40px 30px;
+  box-shadow: 0 10px 40px rgba(139, 90, 43, 0.08);
+  position: relative;
+  z-index: 2;
+}
+
+/* 卡片四角装饰 */
+.corner {
+  position: absolute;
+  width: 16px; height: 16px;
+  border: 2px solid #8B5A2B;
+  opacity: 0.2;
+  transition: all 0.3s;
+}
+.c-tl { top: 10px; left: 10px; border-right: 0; border-bottom: 0; }
+.c-tr { top: 10px; right: 10px; border-left: 0; border-bottom: 0; }
+.c-bl { bottom: 10px; left: 10px; border-right: 0; border-top: 0; }
+.c-br { bottom: 10px; right: 10px; border-left: 0; border-top: 0; }
+
+.welcome-text {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.login-btn {
+  width: 100%;
+  height: 50px;
+  background: #07C160; /* 保持微信绿，符合用户认知 */
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(7, 193, 96, 0.3);
+  transition: transform 0.2s;
+  font-family: "PingFang SC", sans-serif;
+}
+
+.login-btn:active { transform: scale(0.98); }
+
+.agreement-box {
+  margin-top: 24px;
+  font-size: 12px;
+  color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: "PingFang SC", sans-serif;
+}
+
+.checkbox {
+  width: 16px; height: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  cursor: pointer;
+}
+
+.checkbox.checked { background: #8B5A2B; border-color: #8B5A2B; }
+.checkbox.checked::after { content: '✓'; font-size: 10px; }
+
+.link { color: #8B5A2B; text-decoration: none; border-bottom: 1px dashed #8B5A2B; }
+
+/* 底部版权 */
+.footer {
+  position: absolute;
+  bottom: 30px;
+  font-size: 10px;
+  color: #bbb;
+  text-align: center;
+  width: 100%;
+  font-family: "PingFang SC", sans-serif;
+}
+</style>
