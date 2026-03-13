@@ -6,6 +6,7 @@ import cn.hutool.http.HttpResponse;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.example.dto.FaceDiagnosisDTO;
 import com.example.dto.TongueDiagnosisDTO;
 import com.example.service.DiagnosisService;
 import com.example.service.FileStorageService;
@@ -60,6 +61,40 @@ public class DiagnosisServiceImpl implements DiagnosisService {
                 "  \"advice\": \"具体的食疗和生活调理建议\"\n" +
                 "}";
 
+        return callAiService(imageUrl, prompt, TongueDiagnosisDTO.class);
+    }
+
+    @Override
+    public FaceDiagnosisDTO analyzeFace(Long userId, String imageBase64) {
+        // 1. 处理Base64字符串
+        if (imageBase64.contains(",")) {
+            imageBase64 = imageBase64.split(",")[1];
+        }
+        byte[] imageBytes = Base64.decode(imageBase64);
+
+        // 2. 上传图片到OSS (路径: face/userId/)
+        String directory = "face/" + (userId != null ? userId : "visitor");
+        String imageUrl = fileStorageService.upload(imageBytes, "face.jpg", directory);
+
+        // 3. 构建AI请求
+        String prompt = "你是一位中医专家。请先判断这张图片是否为清晰的**人类面部图片**（素颜为佳）。\n" +
+                "1. 如果**不是**清晰的人类面部图片，请仅返回以下JSON：\n" +
+                "{\"valid\": false, \"message\": \"未能识别到清晰的面部，请保持光线均匀，正对镜头重新拍摄。\"}\n" +
+                "2. 如果**是**清晰的人类面部图片，请分析并返回以下JSON：\n" +
+                "{\n" +
+                "  \"valid\": true,\n" +
+                "  \"faceColor\": \"描述面色（如红润、萎黄、苍白、发青、发黑等）\",\n" +
+                "  \"gloss\": \"描述光泽（如荣润、少华、无华、油腻等）\",\n" +
+                "  \"spirit\": \"描述神态（如精神饱满、神疲乏力、烦躁不安等）\",\n" +
+                "  \"diagnosis\": \"综合诊断结果（如脾胃气虚、肝火旺盛等）\",\n" +
+                "  \"diagnosisDesc\": \"详细的诊断描述\",\n" +
+                "  \"advice\": \"具体的养生建议（饮食、作息、情志等）\"\n" +
+                "}\n";
+
+        return callAiService(imageUrl, prompt, FaceDiagnosisDTO.class);
+    }
+
+    private <T> T callAiService(String imageUrl, String prompt, Class<T> responseType) {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("model", vlModel);
         
@@ -110,30 +145,41 @@ public class DiagnosisServiceImpl implements DiagnosisService {
                     
                     try {
                         JSONObject resultJson = JSONUtil.parseObj(content);
-                        TongueDiagnosisDTO dto = new TongueDiagnosisDTO();
-                        dto.setImageUrl(imageUrl);
+                        T dto = resultJson.toBean(responseType);
                         
-                        // 检查是否有效
-                        if (resultJson.containsKey("valid") && !resultJson.getBool("valid")) {
-                            dto.setValid(false);
-                            dto.setMessage(resultJson.getStr("message", "未能识别到舌象，请重新上传"));
-                            return dto;
+                        // 由于 toBean 可能不会自动设置 imageUrl，我们需要手动设置
+                        if (dto instanceof TongueDiagnosisDTO) {
+                            ((TongueDiagnosisDTO) dto).setImageUrl(imageUrl);
+                            // 确保 valid 字段正确
+                            if (!resultJson.getBool("valid", true)) {
+                                ((TongueDiagnosisDTO) dto).setValid(false);
+                                ((TongueDiagnosisDTO) dto).setMessage(resultJson.getStr("message"));
+                            }
+                        } else if (dto instanceof FaceDiagnosisDTO) {
+                            ((FaceDiagnosisDTO) dto).setImageUrl(imageUrl);
+                            if (!resultJson.getBool("valid", true)) {
+                                ((FaceDiagnosisDTO) dto).setValid(false);
+                                ((FaceDiagnosisDTO) dto).setMessage(resultJson.getStr("message"));
+                            }
                         }
-
-                        dto.setValid(true);
-                        dto.setTongueBody(resultJson.getStr("tongueBody"));
-                        dto.setTongueCoating(resultJson.getStr("tongueCoating"));
-                        dto.setDiagnosis(resultJson.getStr("diagnosis"));
-                        dto.setAdvice(resultJson.getStr("advice"));
                         
-                        System.out.println("Final DTO: " + dto);
                         return dto;
                     } catch (Exception e) {
-                        TongueDiagnosisDTO errorDto = new TongueDiagnosisDTO();
-                        errorDto.setImageUrl(imageUrl);
-                        errorDto.setDiagnosis("解析失败");
-                        errorDto.setAdvice(content);
-                        return errorDto;
+                        try {
+                            T errorDto = responseType.newInstance();
+                            if (errorDto instanceof TongueDiagnosisDTO) {
+                                ((TongueDiagnosisDTO) errorDto).setImageUrl(imageUrl);
+                                ((TongueDiagnosisDTO) errorDto).setDiagnosis("解析失败");
+                                ((TongueDiagnosisDTO) errorDto).setAdvice(content);
+                            } else if (errorDto instanceof FaceDiagnosisDTO) {
+                                ((FaceDiagnosisDTO) errorDto).setImageUrl(imageUrl);
+                                ((FaceDiagnosisDTO) errorDto).setDiagnosis("解析失败");
+                                ((FaceDiagnosisDTO) errorDto).setAdvice(content);
+                            }
+                            return errorDto;
+                        } catch (Exception ex) {
+                            throw new RuntimeException("Error creating error DTO", ex);
+                        }
                     }
                 }
             }

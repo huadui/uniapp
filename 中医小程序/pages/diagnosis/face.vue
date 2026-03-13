@@ -8,7 +8,7 @@
     </div>
 
     <!-- 拍摄引导区 -->
-    <div class="camera-section" v-if="!result">
+    <div class="camera-section" v-if="!resultData">
       <div class="camera-placeholder" @click="chooseImage">
         <div class="camera-mask">
           <!-- 模拟人脸轮廓 -->
@@ -22,8 +22,8 @@
         <image v-if="tempImage" :src="tempImage" class="preview-img" mode="aspectFill"></image>
       </div>
       
-      <button class="action-btn" @click="startAnalyze" :disabled="!tempImage">
-        {{ tempImage ? '开始分析' : '请先上传' }}
+      <button class="action-btn" @click="startAnalyze" :disabled="!tempImage || isAnalyzing">
+        {{ isAnalyzing ? '正在分析...' : (tempImage ? '开始分析' : '请先上传') }}
       </button>
     </div>
 
@@ -38,54 +38,26 @@
         <div class="face-feature">
           <div class="feature-item">
             <div class="f-label">面色</div>
-            <div class="f-val">萎黄</div>
+            <div class="f-val">{{ resultData.faceColor }}</div>
           </div>
           <div class="feature-item">
             <div class="f-label">光泽</div>
-            <div class="f-val">少华</div>
+            <div class="f-val">{{ resultData.gloss }}</div>
           </div>
           <div class="feature-item">
             <div class="f-label">神态</div>
-            <div class="f-val">疲惫</div>
+            <div class="f-val">{{ resultData.spirit }}</div>
           </div>
         </div>
         
         <div class="diagnosis-main">
-          <div class="d-title">综合诊断：脾胃气虚</div>
-          <div class="d-desc">面色萎黄无华，神疲乏力，多为脾胃虚弱，气血生化不足所致。</div>
-        </div>
-        
-        <div class="organ-status">
-          <div class="organ-title">脏腑状况</div>
-          <div class="organ-grid">
-            <div class="organ-item status-ok">
-              <div class="o-name">心</div>
-              <div class="o-dot"></div>
-            </div>
-            <div class="organ-item status-ok">
-              <div class="o-name">肝</div>
-              <div class="o-dot"></div>
-            </div>
-            <div class="organ-item status-warn">
-              <div class="o-name">脾</div>
-              <div class="o-dot"></div>
-            </div>
-            <div class="organ-item status-ok">
-              <div class="o-name">肺</div>
-              <div class="o-dot"></div>
-            </div>
-            <div class="organ-item status-ok">
-              <div class="o-name">肾</div>
-              <div class="o-dot"></div>
-            </div>
-          </div>
+          <div class="d-title">综合诊断：{{ resultData.diagnosis }}</div>
+          <div class="d-desc">{{ resultData.diagnosisDesc }}</div>
         </div>
         
         <div class="suggestion-box">
           <div class="s-title"><i class="ri-cup-line"></i> 养生建议</div>
-          <div class="s-item">1. 规律饮食，细嚼慢咽，七分饱。</div>
-          <div class="s-item">2. 推荐药膳：黄芪炖鸡，补中益气。</div>
-          <div class="s-item">3. 避免过度思虑，保持心情舒畅。</div>
+          <div class="s-item" style="white-space: pre-wrap;">{{ resultData.advice }}</div>
         </div>
       </div>
     </div>
@@ -93,11 +65,14 @@
 </template>
 
 <script>
+import { uploadFaceImage } from '@/api/diagnosis.js';
+
 export default {
   data() {
     return {
       tempImage: '',
-      result: null
+      resultData: null,
+      isAnalyzing: false
     }
   },
   methods: {
@@ -115,19 +90,61 @@ export default {
       });
     },
     startAnalyze() {
-      if (!this.tempImage) return;
+      if (!this.tempImage || this.isAnalyzing) return;
       
-      uni.showLoading({ title: '面诊分析中...' });
+      this.isAnalyzing = true;
+      uni.showLoading({ title: 'AI 面诊中...' });
       
-      // 模拟 API 延迟
-      setTimeout(() => {
-        uni.hideLoading();
-        this.result = true; // 显示结果
-      }, 2000);
+      // 读取文件并转换为Base64
+      uni.getFileSystemManager().readFile({
+        filePath: this.tempImage,
+        encoding: 'base64',
+        success: (res) => {
+          const base64 = 'data:image/jpeg;base64,' + res.data;
+          
+          // 获取当前用户ID
+          const userInfo = uni.getStorageSync('userInfo');
+          const userId = userInfo ? userInfo.id : null;
+          
+          uploadFaceImage(userId, base64)
+            .then(res => {
+              const data = res.data;
+              if (data.valid === false) {
+                uni.showModal({
+                  title: '提示',
+                  content: data.message || '未能识别到清晰面相，请重新拍摄',
+                  showCancel: false,
+                  confirmText: '我知道了',
+                  confirmColor: '#8B5A2B'
+                });
+                this.resultData = null;
+              } else {
+                this.resultData = data;
+              }
+            })
+            .catch(err => {
+              console.error(err);
+              uni.showToast({
+                title: typeof err === 'string' ? err : '辨证失败，请重试',
+                icon: 'none'
+              });
+            })
+            .finally(() => {
+              uni.hideLoading();
+              this.isAnalyzing = false;
+            });
+        },
+        fail: (err) => {
+          console.error('Read file failed:', err);
+          uni.showToast({ title: '图片读取失败', icon: 'none' });
+          uni.hideLoading();
+          this.isAnalyzing = false;
+        }
+      });
     },
     reset() {
       this.tempImage = '';
-      this.result = null;
+      this.resultData = null;
     }
   }
 }
@@ -268,16 +285,6 @@ export default {
 .diagnosis-main { margin-bottom: 24px; }
 .d-title { font-size: 18px; font-weight: 600; color: #333; margin-bottom: 8px; }
 .d-desc { font-size: 14px; color: #555; line-height: 1.6; }
-
-.organ-status { margin-bottom: 24px; }
-.organ-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
-.organ-grid { display: flex; justify-content: space-between; }
-.organ-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.o-name { font-size: 12px; color: #666; }
-.o-dot { width: 8px; height: 8px; border-radius: 50%; }
-
-.status-ok .o-dot { background: #5D7A69; }
-.status-warn .o-dot { background: #B8860B; box-shadow: 0 0 4px #B8860B; }
 
 .suggestion-box {
   background: #F9F7F2;

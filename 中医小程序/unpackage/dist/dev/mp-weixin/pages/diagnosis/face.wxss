@@ -134,22 +134,6 @@
 }
 .d-desc.data-v-9f8aba69 { font-size: 14px; color: #555; line-height: 1.6;
 }
-.organ-status.data-v-9f8aba69 { margin-bottom: 24px;
-}
-.organ-title.data-v-9f8aba69 { font-size: 14px; font-weight: 600; margin-bottom: 12px;
-}
-.organ-grid.data-v-9f8aba69 { display: flex; justify-content: space-between;
-}
-.organ-item.data-v-9f8aba69 { display: flex; flex-direction: column; align-items: center; gap: 6px;
-}
-.o-name.data-v-9f8aba69 { font-size: 12px; color: #666;
-}
-.o-dot.data-v-9f8aba69 { width: 8px; height: 8px; border-radius: 50%;
-}
-.status-ok .o-dot.data-v-9f8aba69 { background: #5D7A69;
-}
-.status-warn .o-dot.data-v-9f8aba69 { background: #B8860B; box-shadow: 0 0 4px #B8860B;
-}
 .suggestion-box.data-v-9f8aba69 {
   background: #F9F7F2;
   padding: 16px;
