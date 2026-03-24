@@ -4,6 +4,7 @@
     "pages/index/index",
     "pages/symptom-chat/symptom-chat",
     "pages/constitution/test",
+    "pages/constitution/result",
     "pages/history/history",
     "pages/profile/profile",
     "pages/diagnosis/tongue",

@@ -6,6 +6,7 @@ if (!Math) {
   "./pages/index/index.js";
   "./pages/symptom-chat/symptom-chat.js";
   "./pages/constitution/test.js";
+  "./pages/constitution/result.js";
   "./pages/history/history.js";
   "./pages/profile/profile.js";
   "./pages/diagnosis/tongue.js";

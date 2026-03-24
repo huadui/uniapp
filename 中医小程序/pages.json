@@ -29,6 +29,13 @@
 			}
 		},
 		{
+			"path": "pages/constitution/result",
+			"style": {
+				"navigationBarTitleText": "辨识结果",
+				"navigationStyle": "custom"
+			}
+		},
+		{
 			"path": "pages/history/history",
 			"style": {
 				"navigationBarTitleText": "医案记录",

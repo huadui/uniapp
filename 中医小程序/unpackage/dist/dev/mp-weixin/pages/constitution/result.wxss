@@ -1,0 +1,141 @@
+
+.result-container.data-v-9d964624 {
+  min-height: 100vh;
+  background-color: #F7F5F0;
+  padding-bottom: 40px;
+  font-family: "PingFang SC", "Kaiti SC", serif;
+}
+.navbar.data-v-9d964624 {
+  background: rgba(247, 245, 240, 0.95);
+  padding: 12px 20px;
+  padding-top: calc(44px + env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.nav-left.data-v-9d964624 { font-size: 24px; color: #555; width: 40px;
+}
+.nav-title.data-v-9d964624 { font-size: 18px; font-weight: 600; color: #333;
+}
+.nav-right.data-v-9d964624 { width: 40px;
+}
+.result-card.data-v-9d964624 {
+  margin: 20px;
+  padding: 24px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(139, 90, 43, 0.08);
+}
+.result-header.data-v-9d964624 {
+  text-align: center;
+  margin-bottom: 16px;
+}
+.label.data-v-9d964624 {
+  font-size: 14px;
+  color: #888;
+  display: block;
+  margin-bottom: 8px;
+}
+.main-type.data-v-9d964624 {
+  font-size: 28px;
+  font-weight: bold;
+  color: #8B5A2B;
+}
+.tendency-section.data-v-9d964624 {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 14px;
+  color: #666;
+}
+.chart-box.data-v-9d964624 {
+  margin-top: 24px;
+  border-top: 1px solid #eee;
+  padding-top: 16px;
+}
+.chart-item.data-v-9d964624 {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.chart-label.data-v-9d964624 {
+  width: 60px;
+  font-size: 13px;
+  color: #555;
+}
+.chart-bar-bg.data-v-9d964624 {
+  flex: 1;
+  height: 10px;
+  background: #F0F0F0;
+  border-radius: 5px;
+  margin: 0 12px;
+  overflow: hidden;
+}
+.chart-bar-fill.data-v-9d964624 {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.5s ease;
+}
+.chart-value.data-v-9d964624 {
+  width: 40px;
+  font-size: 12px;
+  color: #888;
+  text-align: right;
+}
+.advice-card.data-v-9d964624 {
+  margin: 20px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+}
+.card-title.data-v-9d964624 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #eee;
+}
+.card-title i.data-v-9d964624 {
+  color: #FBC02D;
+  font-size: 20px;
+}
+.advice-content.data-v-9d964624 {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+.actions.data-v-9d964624 {
+  display: flex;
+  gap: 16px;
+  padding: 0 20px;
+  margin-top: 30px;
+}
+.btn.data-v-9d964624 {
+  flex: 1;
+  height: 48px;
+  border-radius: 24px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+.btn-primary.data-v-9d964624 {
+  background: #8B5A2B;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(139, 90, 43, 0.3);
+}
+.btn-outline.data-v-9d964624 {
+  background: transparent;
+  border: 1px solid #8B5A2B;
+  color: #8B5A2B;
+}
