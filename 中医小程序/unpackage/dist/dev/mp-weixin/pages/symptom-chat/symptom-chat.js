@@ -1,6 +1,7 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
 const api_chat = require("../../api/chat.js");
+const api_history = require("../../api/history.js");
 const _sfc_main = {
   data() {
     return {
@@ -8,6 +9,9 @@ const _sfc_main = {
       scrollIntoView: "",
       inputText: "",
       isLoading: false,
+      isHistoryMode: false,
+      recordId: null,
+      // Used to keep track of current session for auto-saving
       quickTags: ["失眠多梦", "心烦易怒", "手足冰凉", "食欲不振"],
       messages: [
         {
@@ -21,7 +25,68 @@ const _sfc_main = {
       ]
     };
   },
+  onLoad(options) {
+    if (options.mode === "history") {
+      this.isHistoryMode = true;
+      const historyData = common_vendor.index.getStorageSync("temp_history_data");
+      if (historyData) {
+        if (historyData.chatLogJson) {
+          try {
+            this.messages = JSON.parse(historyData.chatLogJson);
+          } catch (e) {
+            common_vendor.index.__f__("error", "at pages/symptom-chat/symptom-chat.vue:97", "Failed to parse chat log", e);
+            this.messages = [
+              { type: "ai", text: "主诉：" + historyData.mainSymptom },
+              { type: "ai", text: "诊断：" + historyData.diagnosis },
+              { type: "ai", text: "建议：" + historyData.advice }
+            ];
+          }
+        } else {
+          this.messages = [
+            { type: "ai", text: "主诉：" + historyData.mainSymptom },
+            { type: "ai", text: "诊断：" + historyData.diagnosis },
+            { type: "ai", text: "建议：" + historyData.advice }
+          ];
+        }
+      }
+    }
+  },
   methods: {
+    saveRecord(showToastFlag = true) {
+      const userInfo = common_vendor.index.getStorageSync("userInfo");
+      if (!userInfo)
+        return;
+      if (showToastFlag)
+        common_vendor.index.showLoading({ title: "保存中..." });
+      const userMessages = this.messages.filter((m) => m.type === "user");
+      const aiMessages = this.messages.filter((m) => m.type === "ai" && !m.card);
+      const mainSymptom = userMessages.length > 0 ? userMessages[0].text : "无主诉";
+      const diagnosis = aiMessages.length > 0 ? "见详细记录" : "未诊断";
+      const advice = aiMessages.length > 0 ? aiMessages[aiMessages.length - 1].text : "";
+      const record = {
+        userId: userInfo.id,
+        mainSymptom: mainSymptom.substring(0, 100),
+        diagnosis,
+        advice: advice.substring(0, 500),
+        chatLogJson: JSON.stringify(this.messages)
+      };
+      if (this.recordId) {
+        record.id = this.recordId;
+      }
+      api_history.saveInquiryRecord(record).then((res) => {
+        if (res.code === "200") {
+          this.recordId = res.data;
+          if (showToastFlag)
+            common_vendor.index.showToast({ title: "保存成功" });
+        } else {
+          if (showToastFlag)
+            common_vendor.index.showToast({ title: "保存失败", icon: "none" });
+        }
+      }).finally(() => {
+        if (showToastFlag)
+          common_vendor.index.hideLoading();
+      });
+    },
     goBack() {
       common_vendor.index.navigateBack();
     },
@@ -56,6 +121,9 @@ const _sfc_main = {
             card: null
             // 目前后端返回纯文本，后续可优化为结构化数据
           });
+          if (!this.isHistoryMode) {
+            this.saveRecord(false);
+          }
         } else {
           this.messages.push({
             type: "ai",
@@ -63,7 +131,7 @@ const _sfc_main = {
           });
         }
       }).catch((err) => {
-        common_vendor.index.__f__("error", "at pages/symptom-chat/symptom-chat.vue:132", "Chat error:", err);
+        common_vendor.index.__f__("error", "at pages/symptom-chat/symptom-chat.vue:207", "Chat error:", err);
         this.messages.push({
           type: "ai",
           text: "网络连接异常，请检查您的网络。"
@@ -81,9 +149,13 @@ const _sfc_main = {
   }
 };
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
-  return {
+  return common_vendor.e({
     a: common_vendor.o((...args) => $options.goBack && $options.goBack(...args)),
-    b: common_vendor.f($data.messages, (msg, index, i0) => {
+    b: !$data.isHistoryMode && $data.messages.length > 2
+  }, !$data.isHistoryMode && $data.messages.length > 2 ? {
+    c: common_vendor.o((...args) => $options.saveRecord && $options.saveRecord(...args))
+  } : {}, {
+    d: common_vendor.f($data.messages, (msg, index, i0) => {
       return common_vendor.e({
         a: common_vendor.t(msg.type === "ai" ? "医" : "患"),
         b: common_vendor.n(msg.type),
@@ -126,20 +198,23 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         o: common_vendor.n(msg.type)
       });
     }),
-    c: $data.scrollTop,
-    d: $data.scrollIntoView,
-    e: common_vendor.f($data.quickTags, (tag, index, i0) => {
+    e: $data.scrollTop,
+    f: $data.scrollIntoView,
+    g: $data.isHistoryMode ? "0" : "",
+    h: !$data.isHistoryMode
+  }, !$data.isHistoryMode ? {
+    i: common_vendor.f($data.quickTags, (tag, index, i0) => {
       return {
         a: common_vendor.t(tag),
         b: index,
         c: common_vendor.o(($event) => $options.sendText(tag), index)
       };
     }),
-    f: common_vendor.o((...args) => $options.sendMsg && $options.sendMsg(...args)),
-    g: $data.inputText,
-    h: common_vendor.o(($event) => $data.inputText = $event.detail.value),
-    i: common_vendor.o((...args) => $options.sendMsg && $options.sendMsg(...args))
-  };
+    j: common_vendor.o((...args) => $options.sendMsg && $options.sendMsg(...args)),
+    k: $data.inputText,
+    l: common_vendor.o(($event) => $data.inputText = $event.detail.value),
+    m: common_vendor.o((...args) => $options.sendMsg && $options.sendMsg(...args))
+  } : {});
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-1ef4f868"]]);
 wx.createPage(MiniProgramPage);

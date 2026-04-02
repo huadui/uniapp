@@ -31,7 +31,7 @@
     <div class="result-section" v-else>
       <div class="result-header">
         <div class="result-title">面诊报告</div>
-        <div class="re-btn" @click="reset">重新检测</div>
+        <div class="re-btn" @click="reset" v-if="!isHistoryMode">重新检测</div>
       </div>
       
       <div class="result-card">
@@ -72,7 +72,24 @@ export default {
     return {
       tempImage: '',
       resultData: null,
-      isAnalyzing: false
+      isAnalyzing: false,
+      isHistoryMode: false
+    }
+  },
+  onLoad(options) {
+    if (options.mode === 'history') {
+      this.isHistoryMode = true;
+      const historyData = uni.getStorageSync('temp_history_data');
+      if (historyData) {
+        if (historyData.fullResultJson) {
+           try {
+             this.resultData = JSON.parse(historyData.fullResultJson);
+             this.tempImage = historyData.imageUrl;
+           } catch(e) {
+             console.error('Failed to parse history data', e);
+           }
+        }
+      }
     }
   },
   methods: {

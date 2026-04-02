@@ -9,7 +9,11 @@ const _sfc_main = {
       common_vendor.index.reLaunch({ url });
     },
     navTo(url) {
-      common_vendor.index.showToast({ title: "功能开发中", icon: "none" });
+      if (!url) {
+        common_vendor.index.showToast({ title: "功能开发中", icon: "none" });
+        return;
+      }
+      common_vendor.index.navigateTo({ url });
     },
     showToast(msg) {
       common_vendor.index.showToast({ title: msg, icon: "none" });

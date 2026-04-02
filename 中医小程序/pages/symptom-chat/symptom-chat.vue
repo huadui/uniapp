@@ -4,11 +4,13 @@
     <div class="navbar">
       <div class="back-icon" @click="goBack"><i class="ri-arrow-left-s-line"></i></div>
       <div class="nav-title">问诊脉络</div>
-      <div class="nav-right"></div>
+      <div class="nav-right">
+        <div class="save-btn" @click="saveRecord" v-if="!isHistoryMode && messages.length > 2">保存</div>
+      </div>
     </div>
 
     <!-- 聊天区域 -->
-    <scroll-view class="chat-area" scroll-y="true" :scroll-top="scrollTop" :scroll-into-view="scrollIntoView">
+    <scroll-view class="chat-area" scroll-y="true" :scroll-top="scrollTop" :scroll-into-view="scrollIntoView" :style="{ marginBottom: isHistoryMode ? '0' : '' }">
       <div class="chat-inner">
         <div v-for="(msg, index) in messages" :key="index" :id="'msg-' + index" 
              class="message" :class="msg.type">
@@ -40,7 +42,7 @@
     </scroll-view>
 
     <!-- 底部输入区 -->
-    <div class="input-area">
+    <div class="input-area" v-if="!isHistoryMode">
       <scroll-view class="quick-tags" scroll-x="true" show-scrollbar="false">
         <div class="quick-tag-list">
           <div class="quick-tag" v-for="(tag, index) in quickTags" :key="index" @click="sendText(tag)">{{ tag }}</div>
@@ -57,6 +59,7 @@
 
 <script>
 import { sendChat } from '@/api/chat.js';
+import { saveInquiryRecord } from '@/api/history.js';
 
 export default {
   data() {
@@ -65,6 +68,8 @@ export default {
       scrollIntoView: '',
       inputText: '',
       isLoading: false,
+      isHistoryMode: false,
+      recordId: null, // Used to keep track of current session for auto-saving
       quickTags: ['失眠多梦', '心烦易怒', '手足冰凉', '食欲不振'],
       messages: [
         {
@@ -78,7 +83,73 @@ export default {
       ]
     }
   },
+  onLoad(options) {
+    if (options.mode === 'history') {
+      this.isHistoryMode = true;
+      const historyData = uni.getStorageSync('temp_history_data');
+      if (historyData) {
+        // historyData is InquiryRecord
+        // fields: mainSymptom, diagnosis, advice, chatLogJson
+        if (historyData.chatLogJson) {
+          try {
+            this.messages = JSON.parse(historyData.chatLogJson);
+          } catch(e) {
+            console.error('Failed to parse chat log', e);
+            // Fallback display
+            this.messages = [
+              { type: 'ai', text: '主诉：' + historyData.mainSymptom },
+              { type: 'ai', text: '诊断：' + historyData.diagnosis },
+              { type: 'ai', text: '建议：' + historyData.advice }
+            ];
+          }
+        } else {
+            this.messages = [
+              { type: 'ai', text: '主诉：' + historyData.mainSymptom },
+              { type: 'ai', text: '诊断：' + historyData.diagnosis },
+              { type: 'ai', text: '建议：' + historyData.advice }
+            ];
+        }
+      }
+    }
+  },
   methods: {
+    saveRecord(showToastFlag = true) {
+      const userInfo = uni.getStorageSync('userInfo');
+      if (!userInfo) return;
+      
+      if (showToastFlag) uni.showLoading({ title: '保存中...' });
+      
+      // Simple summary strategy
+      const userMessages = this.messages.filter(m => m.type === 'user');
+      const aiMessages = this.messages.filter(m => m.type === 'ai' && !m.card);
+      
+      const mainSymptom = userMessages.length > 0 ? userMessages[0].text : '无主诉';
+      const diagnosis = aiMessages.length > 0 ? '见详细记录' : '未诊断';
+      const advice = aiMessages.length > 0 ? aiMessages[aiMessages.length-1].text : '';
+      
+      const record = {
+        userId: userInfo.id,
+        mainSymptom: mainSymptom.substring(0, 100),
+        diagnosis: diagnosis,
+        advice: advice.substring(0, 500),
+        chatLogJson: JSON.stringify(this.messages)
+      };
+
+      if (this.recordId) {
+        record.id = this.recordId;
+      }
+      
+      saveInquiryRecord(record).then(res => {
+        if (res.code === '200') {
+          this.recordId = res.data; // Save the returned ID
+          if (showToastFlag) uni.showToast({ title: '保存成功' });
+        } else {
+          if (showToastFlag) uni.showToast({ title: '保存失败', icon: 'none' });
+        }
+      }).finally(() => {
+        if (showToastFlag) uni.hideLoading();
+      });
+    },
     goBack() {
       uni.navigateBack();
     },
@@ -122,6 +193,10 @@ export default {
             text: aiText,
             card: null // 目前后端返回纯文本，后续可优化为结构化数据
           });
+          // Auto save silently
+          if (!this.isHistoryMode) {
+            this.saveRecord(false);
+          }
         } else {
           this.messages.push({
             type: 'ai',
@@ -184,7 +259,8 @@ export default {
   color: #333;
 }
 .back-icon { font-size: 24px; color: #555; width: 40px; }
-.nav-right { width: 40px; }
+.nav-right { width: 40px; display: flex; align-items: center; justify-content: center; }
+.save-btn { font-size: 14px; color: #8B5A2B; font-weight: 600; }
 
 /* 聊天区域 */
 .chat-area {

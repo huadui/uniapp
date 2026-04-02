@@ -17,10 +17,12 @@
         <java.version>17</java.version>
     </properties>
     <dependencies>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
 
         <dependency>
             <groupId>com.mysql</groupId>
@@ -52,9 +54,9 @@
         
         <!-- Lunar Date Calculation -->
         <dependency>
-            <groupId>com.6tail</groupId>
-            <artifactId>lunar-java</artifactId>
-            <version>1.5.7</version>
+            <groupId>cn.6tail</groupId>
+            <artifactId>lunar</artifactId>
+            <version>1.7.7</version>
         </dependency>
 
         <!-- Aliyun OSS SDK -->

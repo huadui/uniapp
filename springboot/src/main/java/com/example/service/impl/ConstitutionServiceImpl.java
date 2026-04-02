@@ -12,6 +12,9 @@ import java.util.Map;
 @Service
 public class ConstitutionServiceImpl implements ConstitutionService {
 
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.example.service.ConstitutionRecordService constitutionRecordService;
+
     @Override
     public ConstitutionResultDTO calculate(Long userId, Map<Integer, Integer> answers) {
         // 1. 初始化各体质题目ID映射
@@ -51,7 +54,26 @@ public class ConstitutionServiceImpl implements ConstitutionService {
         }
         
         // 3. 判定体质
-        return determineConstitution(scores);
+        ConstitutionResultDTO result = determineConstitution(scores);
+
+        // 4. 保存记录到数据库
+        if (userId != null) {
+            try {
+                com.example.entity.ConstitutionRecord record = new com.example.entity.ConstitutionRecord();
+                record.setUserId(userId);
+                record.setMainConstitution(result.getMainConstitution());
+                record.setTendencyConstitution(result.getTendencyConstitution());
+                record.setScoresJson(cn.hutool.json.JSONUtil.toJsonStr(result.getScores()));
+                record.setAdvice(result.getAdvice());
+                record.setCreatedAt(java.time.LocalDateTime.now());
+                constitutionRecordService.save(record);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("Failed to save constitution record: " + e.getMessage());
+            }
+        }
+
+        return result;
     }
     
     private ConstitutionResultDTO determineConstitution(Map<String, Double> scores) {

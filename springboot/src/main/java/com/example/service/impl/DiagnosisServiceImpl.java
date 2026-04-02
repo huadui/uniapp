@@ -26,6 +26,12 @@ public class DiagnosisServiceImpl implements DiagnosisService {
     @Autowired
     private FileStorageService fileStorageService;
 
+    @Autowired
+    private com.example.service.TongueDiagnosisRecordService tongueDiagnosisRecordService;
+
+    @Autowired
+    private com.example.service.FaceDiagnosisRecordService faceDiagnosisRecordService;
+
     @Value("${deepseek.api-key}")
     private String apiKey;
 
@@ -61,7 +67,26 @@ public class DiagnosisServiceImpl implements DiagnosisService {
                 "  \"advice\": \"具体的食疗和生活调理建议\"\n" +
                 "}";
 
-        return callAiService(imageUrl, prompt, TongueDiagnosisDTO.class);
+        TongueDiagnosisDTO result = callAiService(imageUrl, prompt, TongueDiagnosisDTO.class);
+
+        // 保存记录到数据库
+        if (result != null && result.getValid()) {
+            try {
+                com.example.entity.TongueDiagnosisRecord record = new com.example.entity.TongueDiagnosisRecord();
+                record.setUserId(userId);
+                record.setImageUrl(imageUrl);
+                record.setDiagnosis(result.getDiagnosis());
+                record.setAdvice(result.getAdvice());
+                record.setFullResultJson(JSONUtil.toJsonStr(result));
+                record.setCreatedAt(java.time.LocalDateTime.now());
+                tongueDiagnosisRecordService.save(record);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("Failed to save tongue diagnosis record: " + e.getMessage());
+            }
+        }
+
+        return result;
     }
 
     @Override
@@ -91,7 +116,26 @@ public class DiagnosisServiceImpl implements DiagnosisService {
                 "  \"advice\": \"具体的养生建议（饮食、作息、情志等）\"\n" +
                 "}\n";
 
-        return callAiService(imageUrl, prompt, FaceDiagnosisDTO.class);
+        FaceDiagnosisDTO result = callAiService(imageUrl, prompt, FaceDiagnosisDTO.class);
+
+        // 保存记录到数据库
+        if (result != null && result.getValid()) {
+            try {
+                com.example.entity.FaceDiagnosisRecord record = new com.example.entity.FaceDiagnosisRecord();
+                record.setUserId(userId);
+                record.setImageUrl(imageUrl);
+                record.setDiagnosis(result.getDiagnosis());
+                record.setAdvice(result.getAdvice());
+                record.setFullResultJson(JSONUtil.toJsonStr(result));
+                record.setCreatedAt(java.time.LocalDateTime.now());
+                faceDiagnosisRecordService.save(record);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("Failed to save face diagnosis record: " + e.getMessage());
+            }
+        }
+
+        return result;
     }
 
     private <T> T callAiService(String imageUrl, String prompt, Class<T> responseType) {

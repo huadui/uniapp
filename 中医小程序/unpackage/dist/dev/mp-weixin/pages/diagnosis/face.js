@@ -6,8 +6,25 @@ const _sfc_main = {
     return {
       tempImage: "",
       resultData: null,
-      isAnalyzing: false
+      isAnalyzing: false,
+      isHistoryMode: false
     };
+  },
+  onLoad(options) {
+    if (options.mode === "history") {
+      this.isHistoryMode = true;
+      const historyData = common_vendor.index.getStorageSync("temp_history_data");
+      if (historyData) {
+        if (historyData.fullResultJson) {
+          try {
+            this.resultData = JSON.parse(historyData.fullResultJson);
+            this.tempImage = historyData.imageUrl;
+          } catch (e) {
+            common_vendor.index.__f__("error", "at pages/diagnosis/face.vue:89", "Failed to parse history data", e);
+          }
+        }
+      }
+    }
   },
   methods: {
     goBack() {
@@ -50,7 +67,7 @@ const _sfc_main = {
               this.resultData = data;
             }
           }).catch((err) => {
-            common_vendor.index.__f__("error", "at pages/diagnosis/face.vue:126", err);
+            common_vendor.index.__f__("error", "at pages/diagnosis/face.vue:143", err);
             common_vendor.index.showToast({
               title: typeof err === "string" ? err : "辨证失败，请重试",
               icon: "none"
@@ -61,7 +78,7 @@ const _sfc_main = {
           });
         },
         fail: (err) => {
-          common_vendor.index.__f__("error", "at pages/diagnosis/face.vue:138", "Read file failed:", err);
+          common_vendor.index.__f__("error", "at pages/diagnosis/face.vue:155", "Read file failed:", err);
           common_vendor.index.showToast({ title: "图片读取失败", icon: "none" });
           common_vendor.index.hideLoading();
           this.isAnalyzing = false;
@@ -87,15 +104,18 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     f: common_vendor.t($data.isAnalyzing ? "正在分析..." : $data.tempImage ? "开始分析" : "请先上传"),
     g: common_vendor.o((...args) => $options.startAnalyze && $options.startAnalyze(...args)),
     h: !$data.tempImage || $data.isAnalyzing
-  }) : {
-    i: common_vendor.o((...args) => $options.reset && $options.reset(...args)),
-    j: common_vendor.t($data.resultData.faceColor),
-    k: common_vendor.t($data.resultData.gloss),
-    l: common_vendor.t($data.resultData.spirit),
-    m: common_vendor.t($data.resultData.diagnosis),
-    n: common_vendor.t($data.resultData.diagnosisDesc),
-    o: common_vendor.t($data.resultData.advice)
-  });
+  }) : common_vendor.e({
+    i: !$data.isHistoryMode
+  }, !$data.isHistoryMode ? {
+    j: common_vendor.o((...args) => $options.reset && $options.reset(...args))
+  } : {}, {
+    k: common_vendor.t($data.resultData.faceColor),
+    l: common_vendor.t($data.resultData.gloss),
+    m: common_vendor.t($data.resultData.spirit),
+    n: common_vendor.t($data.resultData.diagnosis),
+    o: common_vendor.t($data.resultData.diagnosisDesc),
+    p: common_vendor.t($data.resultData.advice)
+  }));
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-9f8aba69"]]);
 wx.createPage(MiniProgramPage);

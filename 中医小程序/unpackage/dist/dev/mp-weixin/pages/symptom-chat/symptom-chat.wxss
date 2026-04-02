@@ -34,7 +34,9 @@
 }
 .back-icon.data-v-1ef4f868 { font-size: 24px; color: #555; width: 40px;
 }
-.nav-right.data-v-1ef4f868 { width: 40px;
+.nav-right.data-v-1ef4f868 { width: 40px; display: flex; align-items: center; justify-content: center;
+}
+.save-btn.data-v-1ef4f868 { font-size: 14px; color: #8B5A2B; font-weight: 600;
 }
 
 /* 聊天区域 */

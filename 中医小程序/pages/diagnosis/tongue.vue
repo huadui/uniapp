@@ -31,7 +31,7 @@
     <div class="result-section" v-else>
       <div class="result-header">
         <div class="result-title">辨证报告</div>
-        <div class="re-btn" @click="reset">重新拍摄</div>
+        <div class="re-btn" @click="reset" v-if="!isHistoryMode">重新拍摄</div>
       </div>
       
       <div class="result-card">
@@ -67,7 +67,28 @@ export default {
     return {
       tempImage: '',
       resultData: null,
-      isAnalyzing: false
+      isAnalyzing: false,
+      isHistoryMode: false
+    }
+  },
+  onLoad(options) {
+    if (options.mode === 'history') {
+      this.isHistoryMode = true;
+      const historyData = uni.getStorageSync('temp_history_data');
+      if (historyData) {
+        // historyData is the full TongueDiagnosisRecord
+        // We need to map it to resultData format expected by the template
+        // template uses: tongueBody, tongueCoating, diagnosis, advice
+        // record has: fullResultJson (string) which contains these
+        if (historyData.fullResultJson) {
+           try {
+             this.resultData = JSON.parse(historyData.fullResultJson);
+             this.tempImage = historyData.imageUrl;
+           } catch(e) {
+             console.error('Failed to parse history data', e);
+           }
+        }
+      }
     }
   },
   methods: {

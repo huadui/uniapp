@@ -2,107 +2,180 @@
   <div class="history-container">
     <!-- 顶部导航 -->
     <div class="navbar">
-      <div class="nav-title">医案记录</div>
-      <div class="clear-btn" @click="clearHistory"><i class="ri-delete-bin-line"></i> 清空</div>
+      <div class="nav-left" @click="goHome"><i class="ri-arrow-left-s-line"></i></div>
+      <div class="nav-title">健康档案</div>
+      <div class="nav-right"></div>
     </div>
 
-    <!-- 列表区域 -->
-    <div class="list-container">
-      <div class="timeline-block" v-for="(group, gIdx) in historyGroups" :key="gIdx">
-        <div class="date-label">{{ group.dateLabel }}</div>
-        
-        <div class="record-card" v-for="(item, iIdx) in group.items" :key="iIdx" @click="viewDetail(item)">
-          <div class="record-icon-box" :class="item.iconClass"><i :class="item.icon"></i></div>
-          <div class="record-content">
-            <div class="record-title">{{ item.title }}</div>
-            <div class="record-desc">{{ item.desc }}</div>
-            <div class="tags">
-              <div class="tag" v-for="(tag, tIdx) in item.tags" :key="tIdx">{{ tag }}</div>
+    <!-- 过滤器 -->
+    <div class="filter-tabs">
+      <div class="tab-item" :class="{ active: currentFilter === 'all' }" @click="setFilter('all')">全部</div>
+      <div class="tab-item" :class="{ active: currentFilter === 'constitution' }" @click="setFilter('constitution')">体质</div>
+      <div class="tab-item" :class="{ active: currentFilter === 'tongue' }" @click="setFilter('tongue')">舌诊</div>
+      <div class="tab-item" :class="{ active: currentFilter === 'face' }" @click="setFilter('face')">面诊</div>
+      <div class="tab-item" :class="{ active: currentFilter === 'inquiry' }" @click="setFilter('inquiry')">问诊</div>
+    </div>
+
+    <!-- 列表内容 -->
+    <scroll-view class="history-list" scroll-y="true" v-if="filteredList.length > 0">
+      <div class="timeline">
+        <div class="timeline-item" v-for="(item, index) in filteredList" :key="index" @click="goDetail(item)">
+          
+          <!-- 时间轴左侧 -->
+          <div class="time-col">
+            <div class="date">{{ formatDate(item.createTime, 'MM-dd') }}</div>
+            <div class="year">{{ formatDate(item.createTime, 'yyyy') }}</div>
+          </div>
+          
+          <!-- 轴线 -->
+          <div class="line-col">
+            <div class="dot" :class="item.type"></div>
+            <div class="line" v-if="index < filteredList.length - 1"></div>
+          </div>
+          
+          <!-- 内容卡片 -->
+          <div class="card-col">
+            <div class="history-card">
+              <div class="card-header">
+                <div class="tag" :class="item.type">{{ getTypeName(item.type) }}</div>
+                <div class="time">{{ formatDate(item.createTime, 'HH:mm') }}</div>
+              </div>
+              
+              <div class="card-body">
+                <div class="main-info">
+                  <div class="info-title">{{ item.summary || '未见异常' }}</div>
+                  <div class="info-desc" v-if="item.tags">{{ item.tags }}</div>
+                </div>
+                <image v-if="item.imageUrl" :src="item.imageUrl" class="thumb-img" mode="aspectFill"></image>
+              </div>
             </div>
-            <div class="time">{{ item.time }}</div>
           </div>
         </div>
       </div>
-    </div>
+    </scroll-view>
 
-    <!-- 底部 Tab -->
-    <div class="tabbar">
-      <div class="tab-item" @click="switchTab('/pages/index/index')">
-        <div class="tab-icon"><i class="ri-home-smile-2-line"></i></div>
-        <div class="tab-text">医馆</div>
-      </div>
-      <div class="tab-item active">
-        <div class="tab-icon"><i class="ri-history-line"></i></div>
-        <div class="tab-text">医案</div>
-      </div>
-      <div class="tab-item" @click="switchTab('/pages/profile/profile')">
-        <div class="tab-icon"><i class="ri-user-3-line"></i></div>
-        <div class="tab-text">我的</div>
-      </div>
+    <!-- 空状态 -->
+    <div class="empty-state" v-else>
+      <div class="empty-icon"><i class="ri-file-list-3-line"></i></div>
+      <div class="empty-text">暂无历史记录</div>
     </div>
   </div>
 </template>
 
 <script>
+import { getHistoryList } from '@/api/history.js';
+
 export default {
   data() {
     return {
-      historyGroups: [
-        {
-          dateLabel: '今日 · 乙巳年十月廿三',
-          items: [
-            {
-              title: '问诊脉络',
-              desc: '主诉：失眠多梦，心烦易怒，伴有口苦咽干。',
-              tags: ['气郁质', '肝火旺'],
-              time: '14:30',
-              icon: 'ri-question-answer-line',
-              iconClass: 'bg-ink'
-            },
-            {
-              title: '观舌知病',
-              desc: '舌质红，苔黄腻，齿痕明显。',
-              tags: ['湿热质'],
-              time: '09:15',
-              icon: 'ri-camera-lens-line',
-              iconClass: 'bg-red'
-            }
-          ]
-        },
-        {
-          dateLabel: '昨日 · 乙巳年十月廿二',
-          items: [
-            {
-              title: '问诊脉络',
-              desc: '咨询关于秋季养生的问题。',
-              tags: ['健康科普'],
-              time: '20:00',
-              icon: 'ri-question-answer-line',
-              iconClass: 'bg-ink'
-            }
-          ]
-        }
-      ]
+      currentFilter: 'all',
+      historyList: [],
+      userInfo: null
+    }
+  },
+  onShow() {
+    this.userInfo = uni.getStorageSync('userInfo');
+    if (this.userInfo) {
+      this.fetchData();
+    } else {
+      // 提示登录
+    }
+  },
+  computed: {
+    filteredList() {
+      if (this.currentFilter === 'all') {
+        return this.historyList;
+      }
+      return this.historyList.filter(item => item.type === this.currentFilter);
     }
   },
   methods: {
-    switchTab(url) {
-      uni.reLaunch({ url });
+    goHome() {
+      const pages = getCurrentPages();
+      if (pages.length > 1) {
+        uni.navigateBack();
+      } else {
+        uni.reLaunch({
+          url: '/pages/index/index'
+        });
+      }
     },
-    clearHistory() {
-      uni.showModal({
-        title: '提示',
-        content: '确定要清空所有医案记录吗？',
-        success: (res) => {
-          if (res.confirm) {
-            this.historyGroups = [];
-            uni.showToast({ title: '已清空', icon: 'none' });
+    setFilter(filter) {
+      this.currentFilter = filter;
+    },
+    fetchData() {
+      if (!this.userInfo || !this.userInfo.id) return;
+      
+      uni.showLoading({ title: '加载中...' });
+      getHistoryList(this.userInfo.id)
+        .then(res => {
+          if (res.code === '200') {
+            this.historyList = res.data;
           }
-        }
-      });
+        })
+        .finally(() => {
+          uni.hideLoading();
+        });
     },
-    viewDetail(item) {
-      uni.showToast({ title: '查看详情: ' + item.title, icon: 'none' });
+    getTypeName(type) {
+      const map = {
+        constitution: '体质辨识',
+        tongue: '智能舌诊',
+        face: '智能面诊',
+        inquiry: '智能问诊'
+      };
+      return map[type] || '未知';
+    },
+    formatDate(dateStr, fmt) {
+      if (!dateStr) return '';
+      const date = new Date(dateStr);
+      if (fmt === 'MM-dd') {
+        return (date.getMonth() + 1).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0');
+      }
+      if (fmt === 'yyyy') {
+        return date.getFullYear();
+      }
+      if (fmt === 'HH:mm') {
+        return date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
+      }
+      return dateStr;
+    },
+    goDetail(item) {
+      uni.setStorageSync('temp_history_data', item.fullData);
+      
+      let url = '';
+      switch (item.type) {
+        case 'constitution':
+          try {
+             const scores = item.fullData.scoresJson ? JSON.parse(item.fullData.scoresJson) : {};
+             const resultData = {
+               mainConstitution: item.fullData.mainConstitution,
+               tendencyConstitution: item.fullData.tendencyConstitution,
+               scores: scores,
+               advice: item.fullData.advice
+             };
+             url = `/pages/constitution/result?data=${encodeURIComponent(JSON.stringify(resultData))}`;
+          } catch(e) {
+             console.error(e);
+          }
+          break;
+          
+        case 'tongue':
+          url = `/pages/diagnosis/tongue?mode=history`;
+          break;
+          
+        case 'face':
+          url = `/pages/diagnosis/face?mode=history`;
+          break;
+          
+        case 'inquiry':
+          url = `/pages/symptom-chat/symptom-chat?mode=history`;
+          break;
+      }
+      
+      if (url) {
+        uni.navigateTo({ url });
+      }
     }
   }
 }
@@ -111,137 +184,196 @@ export default {
 <style scoped>
 .history-container {
   min-height: 100vh;
-  padding-bottom: 90px;
   background-color: #F7F5F0;
-  background-image: radial-gradient(#E8E6E1 1px, transparent 1px);
-  background-size: 20px 20px;
-  color: #4A4A4A;
+  display: flex;
+  flex-direction: column;
   font-family: "PingFang SC", "Kaiti SC", serif;
 }
 
-/* 顶部导航 */
 .navbar {
   background: rgba(247, 245, 240, 0.95);
-  padding: 12px 20px;
+  padding: 12px 16px;
   padding-top: calc(44px + env(safe-area-inset-top));
   display: flex;
   align-items: center;
-  justify-content: center;
-  border-bottom: 1px solid #E8E0D5;
   position: sticky;
   top: 0;
   z-index: 100;
+  border-bottom: 1px solid rgba(139, 90, 43, 0.1);
 }
+.nav-title { flex: 1; text-align: center; font-size: 18px; font-weight: 600; color: #333; }
+.nav-left { width: 40px; font-size: 24px; }
+.nav-right { width: 40px; }
 
-.nav-title { font-size: 18px; font-weight: 600; color: #333; font-family: "Kaiti SC", "STKaiti", serif; }
-.clear-btn { position: absolute; right: 20px; color: #888; font-size: 14px; }
-
-.list-container { padding: 20px; }
-
-/* 时间轴样式 */
-.timeline-block { position: relative; padding-left: 24px; margin-bottom: 24px; }
-.timeline-block::before {
-  content: '';
-  position: absolute;
-  left: 6px; top: 28px; bottom: -20px;
-  width: 1px; background: #D8D0C5;
-  border-left: 1px dashed #D8D0C5;
-}
-.timeline-block:last-child::before { display: none; }
-
-.date-label {
-  font-size: 14px;
-  font-weight: bold;
-  color: #8B5A2B;
-  margin-bottom: 12px;
-  position: relative;
-}
-
-.date-label::before {
-  content: '';
-  position: absolute;
-  left: -28px; top: 4px;
-  width: 12px; height: 12px;
-  background: #8B5A2B;
-  border: 3px solid #F7F5F0;
-  border-radius: 50%;
-  box-shadow: 0 0 0 1px #8B5A2B;
-}
-
-.record-card {
-  background: #fff;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 12px;
+.filter-tabs {
   display: flex;
-  gap: 16px;
-  align-items: flex-start;
-  box-shadow: 0 2px 8px rgba(139, 90, 43, 0.08);
-  border: 1px solid #E8E0D5;
-  position: relative;
-}
-
-.record-card::after {
-  content: '';
-  position: absolute;
-  top: 4px; bottom: 4px; left: 4px;
-  width: 2px;
-  background-image: linear-gradient(to bottom, #8B5A2B 33%, transparent 0%);
-  background-size: 1px 6px;
-  opacity: 0.3;
-}
-
-.record-icon-box {
-  width: 40px; height: 40px;
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px;
-  flex-shrink: 0;
-}
-
-.bg-ink { background: #F0EBE5; color: #4A4A4A; }
-.bg-red { background: #FBE8E6; color: #C84C42; }
-
-.record-content { flex: 1; }
-.record-title { font-size: 16px; font-weight: 600; color: #333; margin-bottom: 4px; font-family: "Kaiti SC", "STKaiti", serif; }
-.record-desc { font-size: 13px; color: #666; line-height: 1.5; margin-bottom: 10px; }
-
-.tags { display: flex; gap: 6px; }
-.tag { 
-  font-size: 10px; 
-  padding: 2px 6px; 
-  border-radius: 4px; 
-  background: #F7F5F0; 
-  color: #8B5A2B; 
-  border: 1px solid #E0D8CE;
-}
-
-.time { font-size: 12px; color: #bbb; margin-top: 8px; text-align: right; font-family: "Georgia", serif; font-style: italic; }
-
-/* 底部 Tab */
-.tabbar {
-  position: fixed;
-  bottom: 20px;
-  left: 20px; right: 20px;
-  height: 60px;
   background: #fff;
-  border-radius: 30px;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-  border: 1px solid rgba(0,0,0,0.05);
-  z-index: 100;
+  padding: 10px 16px;
+  position: sticky;
+  top: calc(44px + 44px + env(safe-area-inset-top));
+  z-index: 90;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
 }
 
 .tab-item {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  color: #999;
-  flex: 1; height: 100%;
+  flex: 1;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  padding: 6px 0;
+  position: relative;
 }
 
-.tab-item.active { color: #8B5A2B; }
+.tab-item.active {
+  color: #8B5A2B;
+  font-weight: 600;
+}
 
-.tab-icon { font-size: 24px; margin-bottom: 2px; }
-.tab-text { font-size: 10px; font-weight: 500; }
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  background: #8B5A2B;
+  border-radius: 1px;
+}
+
+.history-list {
+  flex: 1;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-item {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.time-col {
+  width: 50px;
+  text-align: right;
+  padding-right: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.date { font-size: 16px; font-weight: 600; color: #333; }
+.year { font-size: 12px; color: #999; margin-top: 2px; }
+
+.line-col {
+  width: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #ccc;
+  border: 2px solid #F7F5F0;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.dot.constitution { background: #8B5A2B; }
+.dot.tongue { background: #E57373; }
+.dot.face { background: #FFB74D; }
+.dot.inquiry { background: #64B5F6; }
+
+.line {
+  flex: 1;
+  width: 1px;
+  background: #E0E0E0;
+  position: absolute;
+  top: 10px;
+  bottom: -20px;
+  z-index: 1;
+}
+
+.card-col {
+  flex: 1;
+  padding-left: 10px;
+}
+
+.history-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 2px 10px rgba(139, 90, 43, 0.05);
+  border: 1px solid #E8E0D5;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.tag {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.tag.constitution { background: #8B5A2B; }
+.tag.tongue { background: #E57373; }
+.tag.face { background: #FFB74D; }
+.tag.inquiry { background: #64B5F6; }
+
+.time { font-size: 12px; color: #999; }
+
+.card-body {
+  display: flex;
+  justify-content: space-between;
+}
+
+.main-info {
+  flex: 1;
+}
+
+.info-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.info-desc {
+  font-size: 13px;
+  color: #666;
+}
+
+.thumb-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  margin-left: 10px;
+  background: #eee;
+}
+
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  padding-top: 100px;
+}
+
+.empty-icon { font-size: 48px; margin-bottom: 10px; }
+.empty-text { font-size: 14px; }
 </style>

@@ -87,7 +87,11 @@ export default {
       uni.reLaunch({ url });
     },
     navTo(url) {
-      uni.showToast({ title: '功能开发中', icon: 'none' });
+      if (!url) {
+        uni.showToast({ title: '功能开发中', icon: 'none' });
+        return;
+      }
+      uni.navigateTo({ url });
     },
     showToast(msg) {
       uni.showToast({ title: msg, icon: 'none' });
