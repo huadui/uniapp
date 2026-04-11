@@ -15,8 +15,8 @@ spring:
     password: 4123343321aA
   
 wechat:
-  appid: wxcecec8ec357ea0e5 # 请替换为你的小程序AppID
-  secret: **** # 请替换为你的小程序AppSecret
+  appid: wxcecec8ec357ea0e5 
+  secret: ****
 
 deepseek:
   api-key: ****

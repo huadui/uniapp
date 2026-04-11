@@ -11,6 +11,8 @@ if (!Math) {
   "./pages/profile/profile.js";
   "./pages/diagnosis/tongue.js";
   "./pages/diagnosis/face.js";
+  "./pages/profile/settings.js";
+  "./pages/profile/privacy.js";
 }
 const _sfc_main = {
   onLaunch: function() {

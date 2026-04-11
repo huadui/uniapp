@@ -8,7 +8,9 @@
     "pages/history/history",
     "pages/profile/profile",
     "pages/diagnosis/tongue",
-    "pages/diagnosis/face"
+    "pages/diagnosis/face",
+    "pages/profile/settings",
+    "pages/profile/privacy"
   ],
   "window": {
     "navigationBarTextStyle": "black",

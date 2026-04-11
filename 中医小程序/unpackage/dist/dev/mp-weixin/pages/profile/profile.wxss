@@ -15,7 +15,7 @@
   padding: 30px 20px;
   padding-top: calc(60px + env(safe-area-inset-top));
   border-radius: 0 0 30px 30px;
-  margin-bottom: 20px;
+  margin-bottom: 32px;
   position: relative;
   overflow: hidden;
   color: #fff;
@@ -36,19 +36,55 @@
   display: flex; align-items: center; gap: 16px; margin-bottom: 24px; 
   position: relative; z-index: 2;
 }
-.avatar.data-v-dd383ca2 {
-  width: 64px; height: 64px;
+.avatar-btn.data-v-dd383ca2 {
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.avatar-btn.data-v-dd383ca2::after {
+  display: none;
+}
+.avatar-placeholder.data-v-dd383ca2 {
+  width: 100%; height: 100%;
   background: rgba(255,255,255,0.2);
   border: 2px solid rgba(255,255,255,0.4);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-size: 32px; color: #fff;
+  box-sizing: border-box;
+}
+.avatar-img.data-v-dd383ca2 {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.4);
+  box-sizing: border-box;
 }
 .info-text.data-v-dd383ca2 { flex: 1;
 }
-.nickname.data-v-dd383ca2 { font-size: 20px; font-weight: 600; margin-bottom: 4px; font-family: "Kaiti SC", "STKaiti", serif;
+.nickname-input.data-v-dd383ca2 {
+  font-size: 20px; 
+  font-weight: 600; 
+  margin-bottom: 4px; 
+  font-family: "Kaiti SC", "STKaiti", serif;
+  background: transparent;
+  color: #fff;
+  border: none;
+  outline: none;
+  width: 100%;
+  text-align: left;
 }
-.uid.data-v-dd383ca2 { font-size: 12px; opacity: 0.8; font-family: monospace;
+.nickname-input.data-v-dd383ca2::-webkit-input-placeholder {
+  color: rgba(255,255,255,0.7);
+  font-size: 16px;
+}
+.nickname-input.data-v-dd383ca2::placeholder {
+  color: rgba(255,255,255,0.7);
+  font-size: 16px;
 }
 
 /* 数据统计卡片 */
@@ -84,7 +120,7 @@
 .menu-group.data-v-dd383ca2 {
   background: #fff;
   border-radius: 16px;
-  margin: 0 20px 16px;
+  margin: 0 20px 24px;
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(139, 90, 43, 0.05);
   border: 1px solid #E8E0D5;
@@ -92,7 +128,7 @@
 .menu-item.data-v-dd383ca2 {
   display: flex;
   align-items: center;
-  padding: 18px 20px;
+  padding: 20px 22px;
   border-bottom: 1px solid #F5F0EB;
   cursor: pointer;
   transition: background 0.2s;
@@ -101,22 +137,43 @@
 }
 .menu-item.data-v-dd383ca2:active { background: #F9F7F2;
 }
+
+/* 专门针对 button 的样式重置 */
+.btn-menu.data-v-dd383ca2 {
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  text-align: left;
+  line-height: normal;
+  margin: 0;
+}
+.btn-menu.data-v-dd383ca2::after {
+  display: none;
+}
 .menu-icon.data-v-dd383ca2 { 
-  font-size: 20px; 
-  margin-right: 14px; 
+  font-size: 22px; 
   color: #8B5A2B; 
-  width: 24px; text-align: center;
+  margin-right: 12px;
+  display: flex; align-items: center;
 }
-.menu-text.data-v-dd383ca2 { flex: 1; font-size: 15px; color: #333; font-weight: 500;
+.menu-text.data-v-dd383ca2 { 
+  flex: 1; 
+  font-size: 16px; 
+  color: #333; 
+  font-weight: 500;
 }
-.menu-arrow.data-v-dd383ca2 { color: #ccc; font-size: 16px;
+.menu-arrow.data-v-dd383ca2 { 
+  color: #CCC; 
+  font-size: 20px;
 }
+
+/* 退出登录 */
 .logout-btn.data-v-dd383ca2 {
-  margin: 30px 20px;
+  margin: 40px 20px;
   background: #fff;
   color: #C84C42;
   text-align: center;
-  padding: 14px;
+  padding: 16px;
   border-radius: 25px;
   font-weight: 600;
   box-shadow: 0 2px 10px rgba(0,0,0,0.05);

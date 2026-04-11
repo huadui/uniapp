@@ -16,7 +16,7 @@
              class="message" :class="msg.type">
           <div class="avatar" :class="msg.type">{{ msg.type === 'ai' ? '医' : '患' }}</div>
           <div class="bubble">
-            <text>{{ msg.text }}</text>
+            <text>{{ formatText(msg.text) }}</text>
             
             <!-- 结构化分析卡片 (仅 AI 且有 card 数据时显示) -->
             <div v-if="msg.card" class="analysis-card">
@@ -218,6 +218,14 @@ export default {
       this.$nextTick(() => {
         this.scrollIntoView = 'msg-' + (this.messages.length - 1);
       });
+    },
+    formatText(text) {
+      if (!text) return '';
+      // Remove all occurrences of '#' and replace '**' with empty string
+      // using regex
+      let res = text.replace(/#+\s*/g, '');
+      res = res.replace(/\*\*/g, '');
+      return res;
     }
   }
 }

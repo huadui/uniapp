@@ -3,54 +3,46 @@
     <!-- 头部区域 -->
     <div class="header">
       <div class="user-info">
-        <div class="avatar"><i class="ri-user-line"></i></div>
+        <button class="avatar-btn" open-type="chooseAvatar" @chooseavatar="onChooseAvatar">
+          <image v-if="userInfo.avatar" :src="userInfo.avatar" class="avatar-img" mode="aspectFill"></image>
+          <div v-else class="avatar-placeholder"><i class="ri-user-line"></i></div>
+        </button>
         <div class="info-text">
-          <div class="nickname">微信用户</div>
-          <div class="uid">ID: wx_888888</div>
+          <input type="nickname" class="nickname-input" :value="userInfo.nickname" @change="onInputNickname" @blur="onInputNickname" placeholder="点击获取微信昵称" />
         </div>
       </div>
       <div class="stats-card">
         <div class="stat-item">
-          <div class="stat-num">12</div>
-          <div class="stat-label">咨询次数</div>
+          <div class="stat-num">{{ stats.inquiry }}</div>
+          <div class="stat-label">问诊</div>
         </div>
         <div class="stat-item">
-          <div class="stat-num">3</div>
+          <div class="stat-num">{{ stats.face }}</div>
+          <div class="stat-label">面诊</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">{{ stats.tongue }}</div>
+          <div class="stat-label">舌诊</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">{{ stats.constitution }}</div>
           <div class="stat-label">体质报告</div>
         </div>
-        <div class="stat-item">
-          <div class="stat-num">5</div>
-          <div class="stat-label">收藏文章</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 菜单区域 -->
-    <div class="menu-group">
-      <div class="menu-item" @click="navTo('/pages/constitution/report')">
-        <div class="menu-icon"><i class="ri-file-list-3-line"></i></div>
-        <div class="menu-text">我的体质报告</div>
-        <div class="menu-arrow"><i class="ri-arrow-right-s-line"></i></div>
-      </div>
-      <div class="menu-item" @click="showToast('开发中')">
-        <div class="menu-icon"><i class="ri-heart-pulse-line"></i></div>
-        <div class="menu-text">健康档案</div>
-        <div class="menu-arrow"><i class="ri-arrow-right-s-line"></i></div>
       </div>
     </div>
 
     <div class="menu-group">
-      <div class="menu-item" @click="showToast('开发中')">
+      <div class="menu-item" @click="navTo('/pages/profile/settings')">
         <div class="menu-icon"><i class="ri-settings-4-line"></i></div>
         <div class="menu-text">设置</div>
         <div class="menu-arrow"><i class="ri-arrow-right-s-line"></i></div>
       </div>
-      <div class="menu-item" @click="showToast('开发中')">
+      <button class="menu-item btn-menu" open-type="feedback">
         <div class="menu-icon"><i class="ri-question-line"></i></div>
         <div class="menu-text">帮助与反馈</div>
         <div class="menu-arrow"><i class="ri-arrow-right-s-line"></i></div>
-      </div>
-      <div class="menu-item" @click="showToast('开发中')">
+      </button>
+      <div class="menu-item" @click="navTo('/pages/profile/privacy')">
         <div class="menu-icon"><i class="ri-shield-check-line"></i></div>
         <div class="menu-text">隐私政策</div>
         <div class="menu-arrow"><i class="ri-arrow-right-s-line"></i></div>
@@ -78,11 +70,95 @@
 </template>
 
 <script>
+import { getHistoryList } from '@/api/history.js';
+
 export default {
   data() {
-    return {}
+    return {
+      stats: {
+        inquiry: 0,
+        face: 0,
+        tongue: 0,
+        constitution: 0
+      },
+      userInfo: {
+        avatar: '',
+        nickname: ''
+      }
+    }
+  },
+  onShow() {
+    this.loadUserInfo();
+    this.fetchStats();
   },
   methods: {
+    loadUserInfo() {
+      const info = uni.getStorageSync('userInfo') || {};
+      this.userInfo = {
+        ...info,
+        avatar: info.avatar || '',
+        nickname: info.nickname || ''
+      };
+    },
+    onChooseAvatar(e) {
+      const { avatarUrl } = e.detail;
+      this.userInfo.avatar = avatarUrl;
+      this.saveUserInfo();
+    },
+    onInputNickname(e) {
+      const { value } = e.detail;
+      if (value) {
+        this.userInfo.nickname = value;
+        this.saveUserInfo();
+      }
+    },
+    saveUserInfo() {
+      const info = uni.getStorageSync('userInfo') || {};
+      const newInfo = { ...info, avatar: this.userInfo.avatar, nickname: this.userInfo.nickname };
+      uni.setStorageSync('userInfo', newInfo);
+    },
+    fetchStats() {
+      const userInfo = uni.getStorageSync('userInfo');
+      const userId = userInfo && userInfo.id;
+
+      if (!userId) {
+        this.stats = {
+          inquiry: 0,
+          face: 0,
+          tongue: 0,
+          constitution: 0
+        };
+        return;
+      }
+
+      getHistoryList(userId)
+        .then(res => {
+          const nextStats = {
+            inquiry: 0,
+            face: 0,
+            tongue: 0,
+            constitution: 0
+          };
+
+          const list = Array.isArray(res.data) ? res.data : [];
+          list.forEach(item => {
+            if (item.type === 'inquiry') nextStats.inquiry += 1;
+            if (item.type === 'face') nextStats.face += 1;
+            if (item.type === 'tongue') nextStats.tongue += 1;
+            if (item.type === 'constitution') nextStats.constitution += 1;
+          });
+
+          this.stats = nextStats;
+        })
+        .catch(() => {
+          this.stats = {
+            inquiry: 0,
+            face: 0,
+            tongue: 0,
+            constitution: 0
+          };
+        });
+    },
     switchTab(url) {
       uni.reLaunch({ url });
     },
@@ -130,7 +206,7 @@ export default {
   padding: 30px 20px;
   padding-top: calc(60px + env(safe-area-inset-top));
   border-radius: 0 0 30px 30px;
-  margin-bottom: 20px;
+  margin-bottom: 32px;
   position: relative;
   overflow: hidden;
   color: #fff;
@@ -153,18 +229,56 @@ export default {
   position: relative; z-index: 2;
 }
 
-.avatar {
-  width: 64px; height: 64px;
+.avatar-btn {
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.avatar-btn::after {
+  display: none;
+}
+
+.avatar-placeholder {
+  width: 100%; height: 100%;
   background: rgba(255,255,255,0.2);
   border: 2px solid rgba(255,255,255,0.4);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-size: 32px; color: #fff;
+  box-sizing: border-box;
+}
+
+.avatar-img {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.4);
+  box-sizing: border-box;
 }
 
 .info-text { flex: 1; }
-.nickname { font-size: 20px; font-weight: 600; margin-bottom: 4px; font-family: "Kaiti SC", "STKaiti", serif; }
-.uid { font-size: 12px; opacity: 0.8; font-family: monospace; }
+
+.nickname-input {
+  font-size: 20px; 
+  font-weight: 600; 
+  margin-bottom: 4px; 
+  font-family: "Kaiti SC", "STKaiti", serif;
+  background: transparent;
+  color: #fff;
+  border: none;
+  outline: none;
+  width: 100%;
+  text-align: left;
+}
+
+.nickname-input::placeholder {
+  color: rgba(255,255,255,0.7);
+  font-size: 16px;
+}
 
 /* 数据统计卡片 */
 .stats-card {
@@ -199,7 +313,7 @@ export default {
 .menu-group {
   background: #fff;
   border-radius: 16px;
-  margin: 0 20px 16px;
+  margin: 0 20px 24px;
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(139, 90, 43, 0.05);
   border: 1px solid #E8E0D5;
@@ -208,7 +322,7 @@ export default {
 .menu-item {
   display: flex;
   align-items: center;
-  padding: 18px 20px;
+  padding: 20px 22px;
   border-bottom: 1px solid #F5F0EB;
   cursor: pointer;
   transition: background 0.2s;
@@ -216,22 +330,45 @@ export default {
 .menu-item:last-child { border-bottom: none; }
 .menu-item:active { background: #F9F7F2; }
 
-.menu-icon { 
-  font-size: 20px; 
-  margin-right: 14px; 
-  color: #8B5A2B; 
-  width: 24px; text-align: center;
+/* 专门针对 button 的样式重置 */
+.btn-menu {
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  text-align: left;
+  line-height: normal;
+  margin: 0;
+}
+.btn-menu::after {
+  display: none;
 }
 
-.menu-text { flex: 1; font-size: 15px; color: #333; font-weight: 500; }
-.menu-arrow { color: #ccc; font-size: 16px; }
+.menu-icon { 
+  font-size: 22px; 
+  color: #8B5A2B; 
+  margin-right: 12px;
+  display: flex; align-items: center;
+}
 
+.menu-text { 
+  flex: 1; 
+  font-size: 16px; 
+  color: #333; 
+  font-weight: 500;
+}
+
+.menu-arrow { 
+  color: #CCC; 
+  font-size: 20px;
+}
+
+/* 退出登录 */
 .logout-btn {
-  margin: 30px 20px;
+  margin: 40px 20px;
   background: #fff;
   color: #C84C42;
   text-align: center;
-  padding: 14px;
+  padding: 16px;
   border-radius: 25px;
   font-weight: 600;
   box-shadow: 0 2px 10px rgba(0,0,0,0.05);

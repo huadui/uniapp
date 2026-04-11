@@ -62,6 +62,20 @@
 				"navigationBarTitleText": "望面察色",
 				"navigationStyle": "custom"
 			}
+		},
+		{
+			"path": "pages/profile/settings",
+			"style": {
+				"navigationBarTitleText": "设置",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/profile/privacy",
+			"style": {
+				"navigationBarTitleText": "隐私政策",
+				"navigationStyle": "custom"
+			}
 		}
 	],
 	"globalStyle": {

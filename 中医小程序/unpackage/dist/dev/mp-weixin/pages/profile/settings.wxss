@@ -1,0 +1,63 @@
+
+.page-container.data-v-eeefe5cd {
+  min-height: 100vh;
+  background-color: #F7F5F0;
+  display: flex;
+  flex-direction: column;
+  font-family: "PingFang SC", "Kaiti SC", serif;
+  color: #333;
+}
+.navbar.data-v-eeefe5cd {
+  background: rgba(247, 245, 240, 0.95);
+  padding: 12px 20px;
+  padding-top: calc(44px + env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(139, 90, 43, 0.1);
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.nav-title.data-v-eeefe5cd { font-size: 18px; font-weight: 600; flex: 1; text-align: center;
+}
+.back-icon.data-v-eeefe5cd { font-size: 24px; color: #555; width: 40px;
+}
+.nav-right.data-v-eeefe5cd { width: 40px;
+}
+.settings-list.data-v-eeefe5cd {
+  margin-top: 20px;
+  background: #fff;
+  border-top: 1px solid #E8E0D5;
+  border-bottom: 1px solid #E8E0D5;
+}
+.setting-item.data-v-eeefe5cd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #F5F0EB;
+  cursor: pointer;
+  background: #fff;
+}
+.setting-item.data-v-eeefe5cd:last-child {
+  border-bottom: none;
+}
+.setting-item.data-v-eeefe5cd:active {
+  background: #F9F7F2;
+}
+.setting-text.data-v-eeefe5cd {
+  font-size: 16px;
+  color: #333;
+}
+.setting-value.data-v-eeefe5cd {
+  font-size: 14px;
+  color: #999;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.setting-value i.data-v-eeefe5cd {
+  font-size: 18px;
+  color: #CCC;
+}

@@ -49,7 +49,7 @@ public class ConstitutionServiceImpl implements ConstitutionService {
             
             // 转化分 = [(原始分 - 条目数) / (条目数 * 4)] * 100
             int questionCount = qIds.size();
-            double conversionScore = ((double)(rawScore - questionCount) / (questionCount * 4)) * 100;
+            double conversionScore = Math.round(((double)(rawScore - questionCount) / (questionCount * 4)) * 100.0);
             scores.put(type, conversionScore);
         }
         
@@ -104,7 +104,7 @@ public class ConstitutionServiceImpl implements ConstitutionService {
             result.setTendencyConstitution("");
         } else if (pingheScore >= 60 && mainList.isEmpty() && !tendencyList.isEmpty()) {
              // 基本是平和质：转化分 >= 60，且其他体质转化分均 < 40 (即 mainList 为空)
-            result.setMainConstitution("基本平和质");
+            result.setMainConstitution("基本是平和质");
             result.setTendencyConstitution(String.join(",", tendencyList));
         } else {
             if (mainList.isEmpty()) {

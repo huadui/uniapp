@@ -1,4 +1,4 @@
-export const BASE_URL = 'http://localhost:8080'; // 真机调试地址，请确认手机和电脑在同一局域网
+export const BASE_URL = 'http://127.0.0.1:8080'; // 真机调试地址，请确认手机和电脑在同一局域网
 
 const request = (options) => {
   return new Promise((resolve, reject) => {

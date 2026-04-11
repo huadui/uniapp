@@ -145,6 +145,13 @@ const _sfc_main = {
       this.$nextTick(() => {
         this.scrollIntoView = "msg-" + (this.messages.length - 1);
       });
+    },
+    formatText(text) {
+      if (!text)
+        return "";
+      let res = text.replace(/#+\s*/g, "");
+      res = res.replace(/\*\*/g, "");
+      return res;
     }
   }
 };
@@ -159,7 +166,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       return common_vendor.e({
         a: common_vendor.t(msg.type === "ai" ? "医" : "患"),
         b: common_vendor.n(msg.type),
-        c: common_vendor.t(msg.text),
+        c: common_vendor.t($options.formatText(msg.text)),
         d: msg.card
       }, msg.card ? common_vendor.e({
         e: msg.card.tags

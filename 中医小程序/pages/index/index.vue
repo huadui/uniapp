@@ -65,39 +65,6 @@
       </div>
     </div>
 
-    <!-- 每日精选 -->
-    <div class="section-header">
-      <div class="section-mark"></div>
-      <div class="section-title">医道传承</div>
-    </div>
-
-    <div class="article-list">
-      <div class="article-item">
-        <div class="article-thumb">
-          <i class="ri-cup-line"></i>
-        </div>
-        <div class="article-info">
-          <div class="article-title">秋冬进补，这三道药膳最养人</div>
-          <div class="article-tags">
-            <div class="tag">食疗</div>
-            <div class="tag">节气</div>
-          </div>
-        </div>
-      </div>
-      <div class="article-item">
-        <div class="article-thumb">
-          <i class="ri-book-open-line"></i>
-        </div>
-        <div class="article-info">
-          <div class="article-title">《黄帝内经》中的睡眠智慧</div>
-          <div class="article-tags">
-            <div class="tag">经典</div>
-            <div class="tag">养生</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- 底部 Tab (自定义) -->
     <div class="tabbar">
       <div class="tab-item active">
@@ -239,19 +206,19 @@ export default {
   background-color: #F7F5F0;
   background-image: radial-gradient(#E8E6E1 1px, transparent 1px); /* 模拟纸张纹理 */
   background-size: 20px 20px;
-  padding-bottom: 90px;
+  padding-bottom: 110px;
   color: #4A4A4A;
 }
 
 /* 顶部区域 - 新中式风格 */
 .header {
   background: linear-gradient(180deg, #8B5A2B 0%, #A67B51 100%);
-  padding: 20px;
-  padding-top: calc(60px + env(safe-area-inset-top));
-  border-radius: 0 0 30px 30px;
+  padding: 18px 20px 24px;
+  padding-top: calc(52px + env(safe-area-inset-top));
+  border-radius: 0 0 34px 34px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(139, 90, 43, 0.2);
+  box-shadow: 0 8px 26px rgba(139, 90, 43, 0.2);
 }
 
 /* 云纹装饰背景 */
@@ -272,14 +239,14 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
   position: relative;
   z-index: 2;
 }
 
 .greeting-box { color: #fff; }
 .greeting-time { font-size: 14px; opacity: 0.9; font-family: "Kaiti SC", "STKaiti", serif; }
-.greeting-text { font-size: 22px; font-weight: 600; margin-top: 4px; }
+.greeting-text { font-size: 48rpx; font-weight: 600; margin-top: 6px; }
 
 .avatar { 
   width: 48px; height: 48px; 
@@ -293,48 +260,50 @@ export default {
 /* 节气卡片 */
 .solar-card {
   background: rgba(255,255,255,0.95);
-  border-radius: 16px;
-  padding: 16px;
+  border-radius: 20px;
+  padding: 14px 16px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   position: relative;
   z-index: 2;
+  box-shadow: 0 3px 10px rgba(84, 58, 34, 0.08);
 }
 
 .solar-icon {
-  width: 44px; height: 44px;
+  width: 52px; height: 52px;
   background: #8B5A2B;
   color: #fff;
-  border-radius: 8px;
+  border-radius: 12px;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   font-family: "Kaiti SC", "STKaiti", serif;
   line-height: 1.1;
   box-shadow: 0 2px 8px rgba(139, 90, 43, 0.3);
 }
-.solar-name { font-size: 16px; font-weight: bold; }
-.solar-date { font-size: 10px; opacity: 0.8; }
+.solar-name { font-size: 18px; font-weight: bold; }
+.solar-date { font-size: 11px; opacity: 0.85; }
 
 .solar-info { flex: 1; }
-.solar-tip { font-size: 14px; color: #555; font-weight: 500; margin-bottom: 4px; }
-.solar-desc { font-size: 12px; color: #888; }
+.solar-tip { font-size: 18px; color: #555; font-weight: 600; margin-bottom: 6px; }
+.solar-desc { font-size: 24rpx; color: #888; line-height: 1.45; }
 
 /* 功能网格 - 卷轴式设计 */
 .grid-section {
-  padding: 24px 20px;
+  margin-top: -8px;
+  padding: 20px 20px 10px;
 }
 
 .grid-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 14px;
 }
 
 .feature-card {
   background: #FFFFFF;
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 20px;
+  padding: 22px 16px 18px;
   box-shadow: 0 4px 12px rgba(139, 90, 43, 0.08);
   position: relative;
   border: 1px solid rgba(139, 90, 43, 0.1);
@@ -342,29 +311,42 @@ export default {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  transition: transform 0.2s;
+  justify-content: center;
+  min-height: 230rpx;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.feature-card:active { transform: scale(0.98); }
+.feature-card:nth-child(odd) {
+  transform: translateY(-2px);
+}
+
+.feature-card:nth-child(even) {
+  transform: translateY(2px);
+}
+
+.feature-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(139, 90, 43, 0.12);
+}
 
 /* 边角装饰 */
 .corner-deco {
   position: absolute;
-  width: 12px; height: 12px;
+  width: 14px; height: 14px;
   border: 2px solid #8B5A2B;
-  opacity: 0.3;
+  opacity: 0.2;
 }
-.top-left { top: 8px; left: 8px; border-right: none; border-bottom: none; }
-.top-right { top: 8px; right: 8px; border-left: none; border-bottom: none; }
-.bottom-left { bottom: 8px; left: 8px; border-right: none; border-top: none; }
-.bottom-right { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+.top-left { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+.top-right { top: 10px; right: 10px; border-left: none; border-bottom: none; }
+.bottom-left { bottom: 10px; left: 10px; border-right: none; border-top: none; }
+.bottom-right { bottom: 10px; right: 10px; border-left: none; border-top: none; }
 
 .card-icon-box {
-  width: 56px; height: 56px;
+  width: 68px; height: 68px;
   border-radius: 50%;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 28px;
+  font-size: 34px;
 }
 
 .bg-ink { background: #F0EBE5; color: #4A4A4A; } /* 墨灰 */
@@ -373,13 +355,13 @@ export default {
 .bg-gold { background: #FBF5E6; color: #B8860B; } /* 藤黄 */
 
 .card-title { 
-  font-size: 16px; 
+  font-size: 38rpx; 
   font-weight: bold; 
   color: #333; 
   font-family: "Kaiti SC", "STKaiti", serif; 
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
-.card-desc { font-size: 12px; color: #999; }
+.card-desc { font-size: 24rpx; color: #999; }
 
 /* 每日精选 */
 .section-header {
@@ -442,7 +424,7 @@ export default {
 /* 底部导航 - 悬浮式 */
 .tabbar {
   position: fixed;
-  bottom: 20px;
+  bottom: 16px;
   left: 20px; right: 20px;
   height: 60px;
   background: #fff;
