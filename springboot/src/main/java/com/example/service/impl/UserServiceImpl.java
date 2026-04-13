@@ -14,8 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
@@ -35,6 +33,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String response = HttpUtil.get(url);
         JSONObject jsonObject = JSONUtil.parseObj(response);
         String openid = jsonObject.getStr("openid");
+        String sessionKey = jsonObject.getStr("session_key");
         
         if (openid == null) {
             return Result.error("500", "Failed to get openid: " + jsonObject.getStr("errmsg"));
@@ -50,16 +49,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             user.setNickname(loginDTO.getNickname());
             user.setAvatarUrl(loginDTO.getAvatarUrl());
             user.setGender(loginDTO.getGender());
+            user.setSessionKey(sessionKey);
             user.setStatus(1); // Default normal status
             user.setLastLoginTime(LocalDateTime.now());
             user.setCreatedAt(LocalDateTime.now());
             user.setUpdatedAt(LocalDateTime.now());
             this.save(user);
         } else {
-            // Update user info
-            user.setNickname(loginDTO.getNickname());
-            user.setAvatarUrl(loginDTO.getAvatarUrl());
-            user.setGender(loginDTO.getGender());
+            // Update user info (Only update if empty to prevent overwriting custom avatars)
+            if (user.getNickname() == null || user.getNickname().trim().isEmpty()) {
+                user.setNickname(loginDTO.getNickname());
+            }
+            if (user.getAvatarUrl() == null || user.getAvatarUrl().trim().isEmpty()) {
+                user.setAvatarUrl(loginDTO.getAvatarUrl());
+            }
+            if (loginDTO.getGender() != null && user.getGender() == null) {
+                user.setGender(loginDTO.getGender());
+            }
+            if (sessionKey != null && !sessionKey.trim().isEmpty()) {
+                user.setSessionKey(sessionKey);
+            }
             user.setLastLoginTime(LocalDateTime.now());
             user.setUpdatedAt(LocalDateTime.now());
             this.updateById(user);

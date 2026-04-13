@@ -17,6 +17,8 @@ public class User {
     private String nickname;
     private String avatarUrl;
     private Integer gender; // 0-unknown, 1-male, 2-female
+    private String phoneNumber;
+    private String sessionKey;
     private Integer status; // 0-disabled, 1-normal
     private LocalDateTime lastLoginTime;
     private LocalDateTime createdAt;

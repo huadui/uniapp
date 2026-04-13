@@ -38,6 +38,7 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { User, Lock } from '@element-plus/icons-vue'
+import request from '../utils/request'
 
 const router = useRouter()
 const loginFormRef = ref(null)
@@ -60,19 +61,21 @@ const rules = {
 const handleLogin = async () => {
   if (!loginFormRef.value) return
   
-  await loginFormRef.value.validate((valid) => {
+  await loginFormRef.value.validate(async (valid) => {
     if (valid) {
       loading.value = true
-      // TODO: Implement actual login logic here
-      setTimeout(() => {
-        loading.value = false
-        if (loginForm.username === 'admin' && loginForm.password === '123456') {
+      try {
+        const res = await request.post('/admin/sysAdmin/login', loginForm)
+        if (res.code === '200') {
           ElMessage.success('登录成功')
+          localStorage.setItem('adminInfo', JSON.stringify(res.data))
           router.push('/')
-        } else {
-          ElMessage.error('账号或密码错误 (默认: admin/123456)')
         }
-      }, 1000)
+      } catch (error) {
+        // 错误提示已经在 request.js 拦截器中处理
+      } finally {
+        loading.value = false
+      }
     }
   })
 }

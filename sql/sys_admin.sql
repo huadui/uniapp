@@ -1,0 +1,1 @@
+INSERT INTO `sys_admin` (`username`, `password`, `role`, `status`) VALUES ('admin', 'e10adc3949ba59abbe56e057f20f883e', '超级管理员', 1) ON DUPLICATE KEY UPDATE `password`='e10adc3949ba59abbe56e057f20f883e';

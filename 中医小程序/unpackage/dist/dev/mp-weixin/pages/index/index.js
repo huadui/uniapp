@@ -36,13 +36,23 @@ const _sfc_main = {
         solarDate: "",
         solarTip: "",
         solarDesc: ""
+      },
+      userInfo: {
+        avatar: ""
       }
     };
   },
   onShow() {
     this.refreshHeaderInfo();
+    this.loadUserInfo();
   },
   methods: {
+    loadUserInfo() {
+      const info = common_vendor.index.getStorageSync("userInfo") || {};
+      this.userInfo = {
+        avatar: info.avatarUrl || info.avatar || ""
+      };
+    },
     refreshHeaderInfo() {
       const now = /* @__PURE__ */ new Date();
       const solarInfo = this.getCurrentSolarTerm(now);
@@ -114,20 +124,25 @@ const _sfc_main = {
   }
 };
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
-  return {
+  return common_vendor.e({
     a: common_vendor.t($data.headerInfo.lunarText),
     b: common_vendor.t($data.headerInfo.greetingText),
-    c: common_vendor.t($data.headerInfo.solarName),
-    d: common_vendor.t($data.headerInfo.solarDate),
-    e: common_vendor.t($data.headerInfo.solarTip),
-    f: common_vendor.t($data.headerInfo.solarDesc),
-    g: common_vendor.o(($event) => $options.navTo("/pages/symptom-chat/symptom-chat")),
-    h: common_vendor.o(($event) => $options.navTo("/pages/diagnosis/tongue")),
-    i: common_vendor.o(($event) => $options.navTo("/pages/diagnosis/face")),
-    j: common_vendor.o(($event) => $options.navTo("/pages/constitution/test")),
-    k: common_vendor.o(($event) => $options.switchTab("/pages/history/history")),
-    l: common_vendor.o(($event) => $options.switchTab("/pages/profile/profile"))
-  };
+    c: $data.userInfo.avatar
+  }, $data.userInfo.avatar ? {
+    d: $data.userInfo.avatar
+  } : {}, {
+    e: common_vendor.o(($event) => $options.switchTab("/pages/profile/profile")),
+    f: common_vendor.t($data.headerInfo.solarName),
+    g: common_vendor.t($data.headerInfo.solarDate),
+    h: common_vendor.t($data.headerInfo.solarTip),
+    i: common_vendor.t($data.headerInfo.solarDesc),
+    j: common_vendor.o(($event) => $options.navTo("/pages/symptom-chat/symptom-chat")),
+    k: common_vendor.o(($event) => $options.navTo("/pages/diagnosis/tongue")),
+    l: common_vendor.o(($event) => $options.navTo("/pages/diagnosis/face")),
+    m: common_vendor.o(($event) => $options.navTo("/pages/constitution/test")),
+    n: common_vendor.o(($event) => $options.switchTab("/pages/history/history")),
+    o: common_vendor.o(($event) => $options.switchTab("/pages/profile/profile"))
+  });
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-1cf27b2a"]]);
 wx.createPage(MiniProgramPage);

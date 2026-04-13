@@ -14,9 +14,10 @@
           placeholder="搜索管理员账号"
           class="input-with-select"
           style="width: 300px; margin-bottom: 20px;"
+          @keyup.enter="handleSearch"
         >
           <template #append>
-            <el-button :icon="Search" />
+            <el-button :icon="Search" @click="handleSearch" />
           </template>
         </el-input>
       </div>
@@ -24,12 +25,14 @@
       <el-table :data="tableData" style="width: 100%" stripe border>
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="username" label="管理员账号" />
+        <el-table-column prop="realName" label="真实姓名" />
         <el-table-column prop="role" label="角色" />
-        <el-table-column prop="createTime" label="创建时间" />
-        <el-table-column prop="status" label="状态">
+        <el-table-column prop="lastLoginTime" label="最后登录时间" width="180" />
+        <el-table-column prop="createdAt" label="创建时间" width="180" />
+        <el-table-column prop="statusStr" label="状态" width="100">
           <template #default="scope">
-            <el-tag :type="scope.row.status === '启用' ? 'success' : 'danger'">
-              {{ scope.row.status }}
+            <el-tag :type="scope.row.statusStr === '启用' ? 'success' : 'danger'">
+              {{ scope.row.statusStr }}
             </el-tag>
           </template>
         </el-table-column>
@@ -66,7 +69,13 @@
     >
       <el-form :model="form" label-width="80px">
         <el-form-item label="账号">
-          <el-input v-model="form.username" />
+          <el-input v-model="form.username" :disabled="!!form.id" placeholder="请输入管理员账号" />
+        </el-form-item>
+        <el-form-item label="密码">
+          <el-input v-model="form.password" type="password" placeholder="不填则不修改" show-password />
+        </el-form-item>
+        <el-form-item label="真实姓名">
+          <el-input v-model="form.realName" placeholder="请输入真实姓名" />
         </el-form-item>
         <el-form-item label="角色">
           <el-select v-model="form.role" placeholder="请选择角色">
@@ -92,40 +101,78 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { Plus, Search } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import request from '../utils/request'
 
 const searchQuery = ref('')
 const currentPage = ref(1)
 const pageSize = ref(10)
-const total = ref(10)
+const total = ref(0)
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增管理员')
-
-// Mock Data
-const tableData = ref([
-  { id: 1, username: 'admin', role: '超级管理员', createTime: '2023-01-01', status: '启用' },
-  { id: 2, username: 'editor', role: '普通管理员', createTime: '2023-01-02', status: '启用' },
-])
+const tableData = ref([])
 
 const form = reactive({
+  id: null,
   username: '',
+  password: '',
+  realName: '',
   role: '普通管理员',
   status: '启用'
 })
 
+const loadAdmins = async () => {
+  try {
+    const res = await request.get('/admin/sysAdmin/page', {
+      params: {
+        pageNum: currentPage.value,
+        pageSize: pageSize.value,
+        username: searchQuery.value
+      }
+    })
+    if (res.code === '200') {
+      tableData.value = res.data.records.map(item => {
+        return {
+          ...item,
+          statusStr: item.status === 1 ? '启用' : '禁用',
+          createdAt: item.createdAt ? item.createdAt.replace('T', ' ') : '',
+          lastLoginTime: item.lastLoginTime ? item.lastLoginTime.replace('T', ' ') : ''
+        }
+      })
+      total.value = res.data.total
+    }
+  } catch (error) {
+    // 错误在 request.js 已处理
+  }
+}
+
+const handleSearch = () => {
+  currentPage.value = 1
+  loadAdmins()
+}
+
 const handleAdd = () => {
   dialogTitle.value = '新增管理员'
-  form.username = ''
-  form.role = '普通管理员'
-  form.status = '启用'
+  Object.assign(form, {
+    id: null,
+    username: '',
+    password: '',
+    realName: '',
+    role: '普通管理员',
+    status: '启用'
+  })
   dialogVisible.value = true
 }
 
 const handleEdit = (row) => {
   dialogTitle.value = '编辑管理员'
-  Object.assign(form, row)
+  Object.assign(form, {
+    ...row,
+    password: '', // do not show password
+    status: row.status === 1 ? '启用' : '禁用'
+  })
   dialogVisible.value = true
 }
 
@@ -139,27 +186,57 @@ const handleDelete = (row) => {
       type: 'warning',
     }
   )
-    .then(() => {
-      ElMessage({
-        type: 'success',
-        message: '删除成功',
-      })
+    .then(async () => {
+      try {
+        const res = await request.delete(`/admin/sysAdmin/${row.id}`)
+        if (res.code === '200') {
+          ElMessage.success('删除成功')
+          loadAdmins()
+        }
+      } catch (error) {
+      }
     })
     .catch(() => {})
 }
 
-const handleSave = () => {
-  dialogVisible.value = false
-  ElMessage.success('保存成功')
+const handleSave = async () => {
+  const isEdit = !!form.id
+  const url = isEdit ? '/admin/sysAdmin/update' : '/admin/sysAdmin'
+  const method = isEdit ? 'put' : 'post'
+  
+  const payload = { ...form }
+  payload.status = payload.status === '启用' ? 1 : 0
+  
+  if (!isEdit && !payload.password) {
+    ElMessage.warning('新增管理员需填写密码')
+    return
+  }
+  
+  try {
+    const res = await request[method](url, payload)
+    if (res.code === '200') {
+      ElMessage.success('保存成功')
+      dialogVisible.value = false
+      loadAdmins()
+    }
+  } catch (error) {
+    // 错误在 request.js 已处理
+  }
 }
 
 const handleSizeChange = (val) => {
-  console.log(`${val} items per page`)
+  pageSize.value = val
+  loadAdmins()
 }
 
 const handleCurrentChange = (val) => {
-  console.log(`current page: ${val}`)
+  currentPage.value = val
+  loadAdmins()
 }
+
+onMounted(() => {
+  loadAdmins()
+})
 </script>
 
 <style scoped>

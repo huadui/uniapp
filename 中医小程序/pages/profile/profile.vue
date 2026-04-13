@@ -8,7 +8,31 @@
           <div v-else class="avatar-placeholder"><i class="ri-user-line"></i></div>
         </button>
         <div class="info-text">
-          <input type="nickname" class="nickname-input" :value="userInfo.nickname" @change="onInputNickname" @blur="onInputNickname" placeholder="点击获取微信昵称" />
+          <div class="nickname-wrap">
+            <input
+              type="nickname"
+              class="nickname-input"
+              :value="userInfo.nickname"
+              @change="onInputNickname"
+              @blur="onInputNickname"
+              placeholder="点击获取微信昵称"
+            />
+          </div>
+          <div class="gender-row">
+            <div class="gender-selector" @click="chooseGender">
+              <i class="ri-women-line" v-if="userInfo.gender === 2" style="color: #ff9800;"></i>
+              <i class="ri-men-line" v-else-if="userInfo.gender === 1" style="color: #2196f3;"></i>
+              <i class="ri-user-smile-line" v-else></i>
+              <text>{{ genderText }}</text>
+              <i class="ri-arrow-down-s-line"></i>
+            </div>
+          </div>
+          <div class="phone-row">
+            <text class="phone-label">{{ userInfo.phone ? '已绑定：' + userInfo.phone : '手机号未绑定' }}</text>
+            <button class="phone-btn" open-type="getPhoneNumber" @getphonenumber="handlePhoneNumber">
+              {{ userInfo.phone ? '重新绑定' : '绑定手机号' }}
+            </button>
+          </div>
         </div>
       </div>
       <div class="stats-card">
@@ -71,6 +95,7 @@
 
 <script>
 import { getHistoryList } from '@/api/history.js';
+import { BASE_URL } from '@/utils/request.js';
 
 export default {
   data() {
@@ -83,8 +108,17 @@ export default {
       },
       userInfo: {
         avatar: '',
-        nickname: ''
+        nickname: '',
+        gender: 0,
+        phone: ''
       }
+    }
+  },
+  computed: {
+    genderText() {
+      if (this.userInfo.gender === 1) return '男';
+      if (this.userInfo.gender === 2) return '女';
+      return '未知性别';
     }
   },
   onShow() {
@@ -96,26 +130,139 @@ export default {
       const info = uni.getStorageSync('userInfo') || {};
       this.userInfo = {
         ...info,
-        avatar: info.avatar || '',
-        nickname: info.nickname || ''
+        avatar: info.avatarUrl || info.avatar || '',
+        nickname: info.nickname || '',
+        gender: info.gender || 0,
+        phone: info.phoneNumber || info.phone || ''
       };
+      
+      // If we have an ID but phone is empty, fetch latest user info to sync admin edits
+      if (info.id && !this.userInfo.phone) {
+        this.fetchLatestUserInfo(info.id);
+      }
+    },
+    fetchLatestUserInfo(userId) {
+      uni.request({
+        url: `${BASE_URL}/admin/user/${userId}`,
+        method: 'GET',
+        success: (res) => {
+          if (res.statusCode === 200 && res.data.code === '200') {
+            const user = res.data.data;
+            if (user) {
+              this.userInfo.phone = user.phoneNumber || user.phone || '';
+              this.userInfo.nickname = user.nickname || this.userInfo.nickname;
+              this.userInfo.avatar = user.avatarUrl || user.avatar || this.userInfo.avatar;
+              this.userInfo.gender = user.gender || this.userInfo.gender;
+              this.saveUserInfo();
+            }
+          }
+        }
+      });
+    },
+    chooseGender() {
+      uni.showActionSheet({
+        itemList: ['男', '女', '未知'],
+        success: (res) => {
+          let selectedGender = 0;
+          if (res.tapIndex === 0) selectedGender = 1; // 男
+          if (res.tapIndex === 1) selectedGender = 2; // 女
+          
+          if (this.userInfo.gender !== selectedGender) {
+            this.userInfo.gender = selectedGender;
+            this.saveUserInfo();
+            this.updateProfile({ gender: selectedGender });
+          }
+        }
+      });
     },
     onChooseAvatar(e) {
       const { avatarUrl } = e.detail;
       this.userInfo.avatar = avatarUrl;
       this.saveUserInfo();
+      this.uploadAvatar(avatarUrl);
     },
     onInputNickname(e) {
       const { value } = e.detail;
       if (value) {
         this.userInfo.nickname = value;
         this.saveUserInfo();
+        this.updateProfile({ nickname: value });
       }
     },
     saveUserInfo() {
       const info = uni.getStorageSync('userInfo') || {};
-      const newInfo = { ...info, avatar: this.userInfo.avatar, nickname: this.userInfo.nickname };
+      const newInfo = {
+        ...info,
+        avatar: this.userInfo.avatar,
+        avatarUrl: this.userInfo.avatar,
+        nickname: this.userInfo.nickname,
+        gender: this.userInfo.gender,
+        phoneNumber: this.userInfo.phone,
+        phone: this.userInfo.phone
+      };
       uni.setStorageSync('userInfo', newInfo);
+    },
+    updateProfile(data) {
+      const storedInfo = uni.getStorageSync('userInfo');
+      if (!storedInfo || !storedInfo.id) return;
+
+      uni.request({
+        url: `${BASE_URL}/admin/user/update`,
+        method: 'PUT',
+        data: {
+          id: storedInfo.id,
+          ...data
+        },
+        success: (res) => {
+          if (res.statusCode === 200 && res.data.code === '200') {
+            console.log('Profile updated successfully');
+          } else {
+            console.error('Failed to update profile', res.data);
+          }
+        },
+        fail: (err) => {
+          console.error('Update profile request failed', err);
+        }
+      });
+    },
+    uploadAvatar(tempFilePath) {
+      if (!tempFilePath) return;
+      const storedInfo = uni.getStorageSync('userInfo');
+      if (!storedInfo || !storedInfo.id) return;
+
+      uni.showLoading({ title: '上传头像...' });
+      uni.uploadFile({
+        url: `${BASE_URL}/admin/user/avatar`,
+        filePath: tempFilePath,
+        name: 'file',
+        formData: {
+          userId: storedInfo.id
+        },
+        success: (res) => {
+          if (res.statusCode === 200) {
+            try {
+              const data = JSON.parse(res.data);
+              if (data.code === '200') {
+                this.userInfo.avatar = data.data;
+                this.saveUserInfo();
+              } else {
+                uni.showToast({ title: data.msg || '上传失败', icon: 'none' });
+              }
+            } catch (e) {
+              console.error('Avatar upload parse fail', e);
+            }
+          } else {
+            uni.showToast({ title: '上传失败', icon: 'none' });
+          }
+        },
+        fail: (err) => {
+          console.error('Avatar upload failed', err);
+          uni.showToast({ title: '上传失败', icon: 'none' });
+        },
+        complete: () => {
+          uni.hideLoading();
+        }
+      });
     },
     fetchStats() {
       const userInfo = uni.getStorageSync('userInfo');
@@ -172,6 +319,43 @@ export default {
     showToast(msg) {
       uni.showToast({ title: msg, icon: 'none' });
     },
+    handlePhoneNumber(e) {
+      if (!e || e.detail.errMsg !== 'getPhoneNumber:ok') {
+        uni.showToast({ title: '获取失败', icon: 'none' });
+        return;
+      }
+      const storedInfo = uni.getStorageSync('userInfo');
+      if (!storedInfo || !storedInfo.id) {
+        uni.showToast({ title: '请先登录', icon: 'none' });
+        return;
+      }
+
+      uni.showLoading({ title: '绑定中...' });
+      uni.request({
+        url: `${BASE_URL}/admin/user/phone`,
+        method: 'POST',
+        data: {
+          userId: storedInfo.id,
+          encryptedData: e.detail.encryptedData,
+          iv: e.detail.iv
+        },
+        success: (res) => {
+          if (res.statusCode === 200 && res.data.code === '200') {
+            this.userInfo.phone = res.data.data;
+            this.saveUserInfo();
+            uni.showToast({ title: '绑定成功', icon: 'success' });
+          } else {
+            uni.showToast({ title: res.data.msg || '绑定失败', icon: 'none' });
+          }
+        },
+        fail: (err) => {
+          console.error('Bind phone failed', err);
+          uni.showToast({ title: '绑定失败', icon: 'none' });
+        },
+        complete: () => uni.hideLoading()
+      });
+    },
+
     handleLogout() {
       uni.showModal({
         title: '提示',
@@ -262,7 +446,7 @@ export default {
 
 .info-text { flex: 1; }
 
-.nickname-input {
+ .nickname-input {
   font-size: 20px; 
   font-weight: 600; 
   margin-bottom: 4px; 
@@ -278,6 +462,64 @@ export default {
 .nickname-input::placeholder {
   color: rgba(255,255,255,0.7);
   font-size: 16px;
+}
+
+.nickname-wrap {
+  width: 100%;
+}
+
+.nickname-edit {
+  font-size: 16px;
+  color: #fff;
+  margin-top: 10px;
+}
+
+.phone-row {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.phone-label {
+  font-size: 12px;
+  color: rgba(255,255,255,0.85);
+}
+.phone-btn {
+  padding: 2px 10px;
+  font-size: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.7);
+  background: transparent;
+  color: #fff;
+}
+
+.nickname-wrap {
+  width: 100%;
+}
+.gender-row {
+  margin-top: 6px;
+}
+.meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.gender-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  color: #fff;
+  cursor: pointer;
+  margin-top: 4px;
+}
+.gender-selector i {
+  font-size: 14px;
 }
 
 /* 数据统计卡片 */

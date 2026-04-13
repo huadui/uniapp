@@ -13,11 +13,15 @@
           active-text-color="#409EFF"
           router
         >
+          <el-menu-item index="/dashboard">
+            <el-icon><DataLine /></el-icon>
+            <span>数据大盘</span>
+          </el-menu-item>
           <el-menu-item index="/user">
             <el-icon><User /></el-icon>
             <span>用户管理</span>
           </el-menu-item>
-          <el-menu-item index="/admin">
+          <el-menu-item index="/admin" v-if="adminInfo?.role === '超级管理员'">
             <el-icon><Setting /></el-icon>
             <span>管理员管理</span>
           </el-menu-item>
@@ -31,7 +35,7 @@
           <div class="header-right">
             <el-dropdown @command="handleCommand">
               <span class="el-dropdown-link">
-                管理员
+                {{ adminInfo?.realName || adminInfo?.username || '管理员' }}
                 <el-icon class="el-icon--right"><ArrowDown /></el-icon>
               </span>
               <template #dropdown>
@@ -51,13 +55,26 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { User, Setting, ArrowDown } from '@element-plus/icons-vue'
+import { User, Setting, ArrowDown, DataLine } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const route = useRoute()
 const router = useRouter()
+const adminInfo = ref(null)
+
+onMounted(() => {
+  const infoStr = localStorage.getItem('adminInfo')
+  if (infoStr) {
+    try {
+      adminInfo.value = JSON.parse(infoStr)
+    } catch (e) {}
+  }
+  if (!adminInfo.value) {
+    router.push('/login')
+  }
+})
 
 const activeMenu = computed(() => route.path)
 
@@ -68,6 +85,7 @@ const handleCommand = (command) => {
       cancelButtonText: '取消',
       type: 'warning',
     }).then(() => {
+      localStorage.removeItem('adminInfo')
       ElMessage.success('退出成功')
       router.push('/login')
     }).catch(() => {})

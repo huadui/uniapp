@@ -86,6 +86,59 @@
   color: rgba(255,255,255,0.7);
   font-size: 16px;
 }
+.nickname-wrap.data-v-dd383ca2 {
+  width: 100%;
+}
+.nickname-edit.data-v-dd383ca2 {
+  font-size: 16px;
+  color: #fff;
+  margin-top: 10px;
+}
+.phone-row.data-v-dd383ca2 {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.phone-label.data-v-dd383ca2 {
+  font-size: 12px;
+  color: rgba(255,255,255,0.85);
+}
+.phone-btn.data-v-dd383ca2 {
+  padding: 2px 10px;
+  font-size: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.7);
+  background: transparent;
+  color: #fff;
+}
+.nickname-wrap.data-v-dd383ca2 {
+  width: 100%;
+}
+.gender-row.data-v-dd383ca2 {
+  margin-top: 6px;
+}
+.meta-row.data-v-dd383ca2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.gender-selector.data-v-dd383ca2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  color: #fff;
+  cursor: pointer;
+  margin-top: 4px;
+}
+.gender-selector i.data-v-dd383ca2 {
+  font-size: 14px;
+}
 
 /* 数据统计卡片 */
 .stats-card.data-v-dd383ca2 {

@@ -7,8 +7,9 @@
           <div class="greeting-time">{{ headerInfo.lunarText }}</div>
           <div class="greeting-text">{{ headerInfo.greetingText }}</div>
         </div>
-        <div class="avatar">
-          <i class="ri-user-line"></i>
+        <div class="avatar" @click="switchTab('/pages/profile/profile')">
+          <image v-if="userInfo.avatar" :src="userInfo.avatar" class="avatar-img" mode="aspectFill"></image>
+          <i v-else class="ri-user-line"></i>
         </div>
       </div>
 
@@ -121,13 +122,23 @@ export default {
         solarDate: '',
         solarTip: '',
         solarDesc: ''
+      },
+      userInfo: {
+        avatar: ''
       }
     }
   },
   onShow() {
     this.refreshHeaderInfo();
+    this.loadUserInfo();
   },
   methods: {
+    loadUserInfo() {
+      const info = uni.getStorageSync('userInfo') || {};
+      this.userInfo = {
+        avatar: info.avatarUrl || info.avatar || ''
+      };
+    },
     refreshHeaderInfo() {
       const now = new Date();
       const solarInfo = this.getCurrentSolarTerm(now);
@@ -214,7 +225,7 @@ export default {
 .header {
   background: linear-gradient(180deg, #8B5A2B 0%, #A67B51 100%);
   padding: 18px 20px 24px;
-  padding-top: calc(52px + env(safe-area-inset-top));
+  padding-top: calc(88px + env(safe-area-inset-top));
   border-radius: 0 0 34px 34px;
   position: relative;
   overflow: hidden;
@@ -255,6 +266,12 @@ export default {
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   color: #fff; font-size: 24px;
+}
+
+.avatar-img {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 /* 节气卡片 */
