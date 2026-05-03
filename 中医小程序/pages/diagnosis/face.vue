@@ -3,7 +3,7 @@
     <!-- 顶部导航 -->
     <div class="navbar">
       <div class="back-icon" @click="goBack"><i class="ri-arrow-left-s-line"></i></div>
-      <div class="nav-title">望面察色</div>
+      <div class="nav-title">智能面诊</div>
       <div class="nav-right"></div>
     </div>
 

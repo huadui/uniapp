@@ -36,7 +36,7 @@
           <div class="corner-deco bottom-left"></div>
           <div class="corner-deco bottom-right"></div>
           <div class="card-icon-box bg-ink"><i class="ri-question-answer-line"></i></div>
-          <div class="card-title">问诊脉络</div>
+          <div class="card-title">智能问诊</div>
           <div class="card-desc">智能辨证施治</div>
         </div>
 
@@ -44,7 +44,7 @@
         <div class="feature-card" @click="navTo('/pages/diagnosis/tongue')">
           <div class="corner-deco top-left"></div><div class="corner-deco top-right"></div><div class="corner-deco bottom-left"></div><div class="corner-deco bottom-right"></div>
           <div class="card-icon-box bg-red"><i class="ri-camera-lens-line"></i></div>
-          <div class="card-title">观舌知病</div>
+          <div class="card-title">智能舌诊</div>
           <div class="card-desc">舌苔色泽分析</div>
         </div>
 
@@ -52,7 +52,7 @@
         <div class="feature-card" @click="navTo('/pages/diagnosis/face')">
           <div class="corner-deco top-left"></div><div class="corner-deco top-right"></div><div class="corner-deco bottom-left"></div><div class="corner-deco bottom-right"></div>
           <div class="card-icon-box bg-gold"><i class="ri-emotion-line"></i></div>
-          <div class="card-title">望面察色</div>
+          <div class="card-title">智能面诊</div>
           <div class="card-desc">气色神态诊断</div>
         </div>
 
@@ -60,7 +60,7 @@
         <div class="feature-card" @click="navTo('/pages/constitution/test')">
           <div class="corner-deco top-left"></div><div class="corner-deco top-right"></div><div class="corner-deco bottom-left"></div><div class="corner-deco bottom-right"></div>
           <div class="card-icon-box bg-green"><i class="ri-file-list-3-line"></i></div>
-          <div class="card-title">辨体养生</div>
+          <div class="card-title">体质辨识</div>
           <div class="card-desc">九种体质测评</div>
         </div>
       </div>
@@ -70,11 +70,11 @@
     <div class="tabbar">
       <div class="tab-item active">
         <div class="tab-icon"><i class="ri-home-smile-2-line"></i></div>
-        <div class="tab-text">医馆</div>
+        <div class="tab-text">首页</div>
       </div>
       <div class="tab-item" @click="switchTab('/pages/history/history')">
         <div class="tab-icon"><i class="ri-history-line"></i></div>
-        <div class="tab-text">医案</div>
+        <div class="tab-text">历史</div>
       </div>
       <div class="tab-item" @click="switchTab('/pages/profile/profile')">
         <div class="tab-icon"><i class="ri-user-3-line"></i></div>

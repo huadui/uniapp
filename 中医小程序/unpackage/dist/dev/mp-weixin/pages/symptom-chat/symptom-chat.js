@@ -109,7 +109,10 @@ const _sfc_main = {
       this.inputText = "";
       this.scrollToBottom();
       this.isLoading = true;
+      const userInfo = common_vendor.index.getStorageSync("userInfo");
+      const userId = userInfo ? userInfo.id : null;
       api_chat.sendChat({
+        userId,
         message: userText,
         history
       }).then((res) => {
@@ -131,7 +134,7 @@ const _sfc_main = {
           });
         }
       }).catch((err) => {
-        common_vendor.index.__f__("error", "at pages/symptom-chat/symptom-chat.vue:207", "Chat error:", err);
+        common_vendor.index.__f__("error", "at pages/symptom-chat/symptom-chat.vue:211", "Chat error:", err);
         this.messages.push({
           type: "ai",
           text: "网络连接异常，请检查您的网络。"

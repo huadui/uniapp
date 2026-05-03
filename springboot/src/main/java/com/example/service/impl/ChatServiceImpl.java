@@ -6,7 +6,12 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.example.dto.ChatRequestDTO;
+import com.example.entity.FaceDiagnosisRecord;
+import com.example.entity.TongueDiagnosisRecord;
 import com.example.service.ChatService;
+import com.example.service.FaceDiagnosisRecordService;
+import com.example.service.TongueDiagnosisRecordService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +32,14 @@ public class ChatServiceImpl implements ChatService {
     @Value("${deepseek.model}")
     private String model;
 
+    @Autowired
+    private TongueDiagnosisRecordService tongueService;
+
+    @Autowired
+    private FaceDiagnosisRecordService faceService;
+
     @Override
-    public String chat(String message, List<ChatRequestDTO.HistoryMessage> history) {
+    public String chat(Long userId, String message, List<ChatRequestDTO.HistoryMessage> history) {
         // Build request body
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("model", model);
@@ -36,10 +47,52 @@ public class ChatServiceImpl implements ChatService {
 
         List<Map<String, String>> messages = new ArrayList<>();
         
+        // Build fusion context
+        StringBuilder fusionContext = new StringBuilder();
+        if (userId != null) {
+            try {
+                // Fetch latest tongue diagnosis
+                TongueDiagnosisRecord tongue = tongueService.lambdaQuery()
+                        .eq(TongueDiagnosisRecord::getUserId, userId)
+                        .orderByDesc(TongueDiagnosisRecord::getCreatedAt)
+                        .last("limit 1")
+                        .one();
+                if (tongue != null && tongue.getDiagnosis() != null) {
+                    fusionContext.append("【最近一次舌诊结果】：").append(tongue.getDiagnosis());
+                    if (tongue.getAdvice() != null) {
+                        fusionContext.append("。建议：").append(tongue.getAdvice());
+                    }
+                    fusionContext.append("\n");
+                }
+
+                // Fetch latest face diagnosis
+                FaceDiagnosisRecord face = faceService.lambdaQuery()
+                        .eq(FaceDiagnosisRecord::getUserId, userId)
+                        .orderByDesc(FaceDiagnosisRecord::getCreatedAt)
+                        .last("limit 1")
+                        .one();
+                if (face != null && face.getDiagnosis() != null) {
+                    fusionContext.append("【最近一次面诊结果】：").append(face.getDiagnosis());
+                    if (face.getAdvice() != null) {
+                        fusionContext.append("。建议：").append(face.getAdvice());
+                    }
+                    fusionContext.append("\n");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         // System prompt to set the persona
         Map<String, String> systemMsg = new HashMap<>();
         systemMsg.put("role", "system");
-        systemMsg.put("content", "你是一位经验丰富的中医专家，精通《黄帝内经》、《伤寒杂病论》等经典。请通过望闻问切的逻辑，与用户进行问诊交流。你的回答应该包含：1. 对症状的分析（辨证）；2. 可能会涉及的体质；3. 给出具体的食疗建议和生活调养建议。回答风格应专业、温和，适当使用中医术语但要通俗易懂。请返回纯文本内容，不要使用Markdown格式。如果用户只说了一两个症状，可以追问更多细节。");
+        
+        String baseSystemPrompt = "你是一位经验丰富的中医专家。请与用户进行问诊交流。你的回答应包含简要的症状分析、体质倾向及食疗建议。请返回纯文本内容，不要使用Markdown格式。请注意：回答务必简短精炼，直奔主题，每次回复请控制在100-150字左右，绝对不要长篇大论。如果用户提供的信息太少，请简短追问。";
+        if (fusionContext.length() > 0) {
+            baseSystemPrompt += "\n以下是用户近期的其他模态诊断信息，请在回复时综合参考（如果与当前症状有关）：\n" + fusionContext.toString();
+        }
+        
+        systemMsg.put("content", baseSystemPrompt);
         messages.add(systemMsg);
 
         // Add history if present

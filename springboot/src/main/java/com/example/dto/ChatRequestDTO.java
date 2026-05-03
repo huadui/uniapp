@@ -6,6 +6,7 @@ import java.util.List;
 
 @Data
 public class ChatRequestDTO {
+    private Long userId;
     private String message;
     private List<HistoryMessage> history;
 

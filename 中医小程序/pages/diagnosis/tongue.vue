@@ -3,7 +3,7 @@
     <!-- 顶部导航 -->
     <div class="navbar">
       <div class="back-icon" @click="goBack"><i class="ri-arrow-left-s-line"></i></div>
-      <div class="nav-title">观舌知病</div>
+      <div class="nav-title">智能舌诊</div>
       <div class="nav-right"></div>
     </div>
 

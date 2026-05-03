@@ -3,7 +3,7 @@
     <!-- 顶部导航 -->
     <div class="navbar">
       <div class="back-icon" @click="goBack"><i class="ri-arrow-left-s-line"></i></div>
-      <div class="nav-title">问诊脉络</div>
+      <div class="nav-title">智能问诊</div>
       <div class="nav-right">
         <div class="save-btn" @click="saveRecord" v-if="!isHistoryMode && messages.length > 2">保存</div>
       </div>
@@ -182,7 +182,11 @@ export default {
       this.isLoading = true;
 
       // Call Backend API
+      const userInfo = uni.getStorageSync('userInfo');
+      const userId = userInfo ? userInfo.id : null;
+      
       sendChat({ 
+        userId: userId,
         message: userText,
         history: history
       }).then(res => {
@@ -393,9 +397,11 @@ export default {
   background: #FDFBF7;
   padding: 12px 16px;
   padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  padding-right: calc(16px + env(safe-area-inset-right));
   border-top: 1px solid #E8E0D5;
   box-shadow: 0 -4px 20px rgba(0,0,0,0.02);
   z-index: 100;
+  box-sizing: border-box;
 }
 
 .quick-tags {
@@ -425,6 +431,8 @@ export default {
   display: flex;
   gap: 10px;
   align-items: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .text-input {
@@ -449,5 +457,6 @@ export default {
   color: #fff;
   font-size: 20px;
   box-shadow: 0 2px 8px rgba(139, 90, 43, 0.3);
+  flex-shrink: 0;
 }
 </style>

@@ -1,5 +1,5 @@
-//export const BASE_URL = 'http://127.0.0.1:8080'; // 真机调试地址，请确认手机和电脑在同一局域网
-export const BASE_URL = 'http://192.168.153.6:8080';
+export const BASE_URL = 'http://127.0.0.1:8080'; // 真机调试地址，请确认手机和电脑在同一局域网
+//export const BASE_URL = 'http://172.20.10.2:8080';
 const request = (options) => {
   return new Promise((resolve, reject) => {
     uni.request({

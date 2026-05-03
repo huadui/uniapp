@@ -21,7 +21,7 @@ public class ChatController {
         if (chatRequest.getMessage() == null || chatRequest.getMessage().trim().isEmpty()) {
             return Result.error("400", "Message cannot be empty");
         }
-        String response = chatService.chat(chatRequest.getMessage(), chatRequest.getHistory());
+        String response = chatService.chat(chatRequest.getUserId(), chatRequest.getMessage(), chatRequest.getHistory());
         return Result.success(response);
     }
 }
